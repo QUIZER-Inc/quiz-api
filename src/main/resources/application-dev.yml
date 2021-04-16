@@ -15,12 +15,11 @@ spring:
       on-profile: "dev"
 mail-sender:
   active: disable
-  email: ${EMAIL_SENDER}
-  password: ${EMAIL_PASSWORD}
+  email: test@mail.m
+  password: 123456
 jwt:
   secret: itquizsecrettokendev
 server:
-  port: 443
   ssl:
     key-store: src\main\resources\keystore.p12
     key-store-password: itquiz
