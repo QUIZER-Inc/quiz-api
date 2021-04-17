@@ -61,11 +61,43 @@ public class QuestionServiceImpl implements QuestionService {
     private final static String sizeError = "Кол-во правильных ответов должно быть 1";
     private final static String correctError = "Кол-во вопросов должно быть 2 и более";//TODO надо ли делать проверку на количество входных вопросов
 
+
+    public void saveQuestion(QuestionDTO questionDTO) {
+        log.info("Попытка сохранить вопрос");
+        Set<ConstraintViolation<QuestionDTO>> violations = validator.validate(questionDTO);
+
+        if (!violations.isEmpty()) {
+            log.error(violations.toString());
+            throw new ConstraintViolationException(violations);
+        }
+
+        Question question = questionMapper.questionFromQuestionDTO(questionDTO);
+
+        if (isExistQuestion(question)) {
+            log.error(questionIsExistError);
+            throw new QuestionIsExistException(questionIsExistError);
+        }
+
+        long countOfRightAnswers = questionDTO.getAnswers().stream()
+                .map(AnswerDTO::isCorrectAnswer)
+                .filter(correct -> correct)
+                .count();
+
+        if (countOfRightAnswers != 1 || questionDTO.getAnswers().size() < 2) {
+            log.error(sizeError);
+            throw new QuestionCreationException(sizeError);
+        }
+
+        question.setAnswers(answerMapper.listAnswersFromListAnswersDTO(questionDTO.getAnswers()));
+        Question savedQuestion = questionRepository.save(question);
+        log.info("Вопрос с id: {} сохранен", savedQuestion);
+    }
+
     @Override
     public void saveQuestion(ArrayList<QuestionDTO> questionDtoList) {
         log.info("Попытка сохранить список вопросов");
 
-        //Валидация созданных QuestionDto
+
         for (QuestionDTO dto:questionDtoList) {
             Set<ConstraintViolation<QuestionDTO>> validateSet = validator.validate(dto);
             if (!validateSet.isEmpty()) {
@@ -73,7 +105,7 @@ public class QuestionServiceImpl implements QuestionService {
                 throw new ConstraintViolationException(validateSet);
             }
         }
-        //проверка на корректность ответов
+
         List<QuestionDTO> dtoList = questionDtoList.stream()
                 .filter(questionDTO -> {
                     if (!questionDTO.getAnswers().isEmpty()||questionDTO.getAnswers().size()<2){
@@ -85,7 +117,6 @@ public class QuestionServiceImpl implements QuestionService {
                 })
                 .collect(Collectors.toList());
 
-        //Преобразуем из List в Set и сразу мапим на Set entity c проверкой налчия Question в БД
         HashSet<Question> questionSet = (HashSet<Question>) new HashSet<>(dtoList)
                 .stream()
                 .map(questionMapper::questionFromQuestionDTO)
@@ -97,8 +128,6 @@ public class QuestionServiceImpl implements QuestionService {
                 })
                 .collect(Collectors.toSet());
 
-        //Сохраняем в БД наши Question
-//        HashSet<Question> savedQuestion = (HashSet<Question>) questionRepository.saveAll(questionSet);
         questionSet.stream()
                 .peek(question -> {
                     questionRepository.save(question);

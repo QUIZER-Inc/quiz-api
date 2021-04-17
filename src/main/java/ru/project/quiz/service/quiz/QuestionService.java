@@ -10,6 +10,8 @@ public interface QuestionService {
 
     void saveQuestion(ArrayList<QuestionDTO> questionDtoSet);
 
+    void saveQuestion(QuestionDTO questionDto);
+
     void deleteQuestion(long id);
 
     void editQuestion(QuestionDTO questionDTO);

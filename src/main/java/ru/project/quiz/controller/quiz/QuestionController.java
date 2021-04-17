@@ -20,7 +20,8 @@ import java.util.HashSet;
 public class QuestionController {
 
     private static final String RANDOM_QUESTION = "/random";
-    private static final String ADD_QUESTION = "/admin/add";
+    private static final String ADD_QUESTION = "/admin/add/question";
+    private static final String ADD_QUESTIONS = "/admin/add/questions";
     private static final String DELETE_QUESTION = "/admin/delete";
     private static final String EDIT_QUESTION = "/admin/edit";
 
@@ -35,11 +36,18 @@ public class QuestionController {
     }
 
 
-    @Operation(summary = "Добавление вопроса")
+    @Operation(summary = "Добавление вопроса",security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(ADD_QUESTION)
+    public ResponseEntity<Response> addQuestion(@RequestBody QuestionDTO questionDto) {
+        questionService.saveQuestion(questionDto);
+        return new ResponseEntity<>(new Response("Question is added"), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Добавление вопросов",security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(ADD_QUESTIONS)
     public ResponseEntity<Response> addQuestion(@RequestBody ArrayList<QuestionDTO> questionDtoSet) {
         questionService.saveQuestion(questionDtoSet);
-        return new ResponseEntity<>(new Response("Question is added"), HttpStatus.OK);
+        return new ResponseEntity<>(new Response("Questions is added"), HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление вопроса", security = @SecurityRequirement(name = "bearerAuth"))
