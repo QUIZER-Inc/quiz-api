@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.project.quiz.domain.dto.quiz.CategoryDTO;
 import ru.project.quiz.domain.entity.quiz.Category;
-import ru.project.quiz.repository.quiz.CategoryRepository;
+import ru.project.quiz.handler.response.Response;
+import ru.project.quiz.service.quiz.CategoryService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -17,39 +19,42 @@ import java.util.List;
 @Tag(name = "Контроллер категорий")
 public class CategoryController {
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     @GetMapping
     @Operation(summary = "Получение списка категорий", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<List<Category>> getAllCategories() {
-        return new ResponseEntity<>(categoryRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        return new ResponseEntity<>(categoryService.getAllCategoriesDTO(), HttpStatus.OK);
     }
+
     @GetMapping("/{categoryName}")
     @Operation(summary = "Получение одной категории", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Category> getCategory(@PathVariable String categoryName) {
-        return new ResponseEntity<>(categoryRepository.findByCategoryName(categoryName), HttpStatus.OK);
+        return new ResponseEntity<>(categoryService.getCategory(categoryName), HttpStatus.OK);
     }
 
     @PostMapping
     @Operation(summary = "Добавление новой категорий", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<Category> addCategory(@Valid @RequestBody Category category) {
-        return new ResponseEntity<>(categoryRepository.save(category), HttpStatus.OK);
+    public ResponseEntity<Response> addCategory(@Valid @RequestBody Category category) {
+        categoryService.addCategory(category);
+        return new ResponseEntity<>(new Response("Category is added"), HttpStatus.CREATED);
     }
+
     @PatchMapping
     @Operation(summary = "Изменение одной категорий", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<Category> editCategory(@Valid @RequestBody Category category) {
-        return new ResponseEntity<>(categoryRepository.save(category), HttpStatus.OK);
+    public ResponseEntity<Response> editCategory(@Valid @RequestBody Category category) {
+        categoryService.editCategory(category);
+        return new ResponseEntity<>(new Response("Category edited"), HttpStatus.OK);
     }
 
     @DeleteMapping("/{categoryName}")
     @Operation(summary = "Удаление одной категории", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Category> deleteCategory(@PathVariable String categoryName) {
-        categoryRepository.deleteByCategoryName(categoryName);
+        categoryService.deleteCategory(categoryName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-    public CategoryController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 }
