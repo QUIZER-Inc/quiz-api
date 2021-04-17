@@ -29,8 +29,8 @@ public class CategoryController {
 
     @GetMapping("/{categoryName}")
     @Operation(summary = "Получение одной категории", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<Category> getCategory(@PathVariable String categoryName) {
-        return new ResponseEntity<>(categoryService.getCategory(categoryName), HttpStatus.OK);
+    public ResponseEntity<CategoryDTO> getCategory(@PathVariable String categoryName) {
+        return new ResponseEntity<>(categoryService.getCategoryDTO(categoryName), HttpStatus.OK);
     }
 
     @PostMapping
@@ -49,7 +49,7 @@ public class CategoryController {
 
     @DeleteMapping("/{categoryName}")
     @Operation(summary = "Удаление одной категории", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<Category> deleteCategory(@PathVariable String categoryName) {
+    public ResponseEntity deleteCategory(@PathVariable String categoryName) {
         categoryService.deleteCategory(categoryName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
