@@ -1,7 +1,6 @@
 package ru.project.quiz.domain.dto.quiz;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import ru.project.quiz.domain.enums.question.CategoryType;
 import ru.project.quiz.domain.enums.question.DifficultyType;
 
 import javax.validation.constraints.NotBlank;
@@ -29,17 +28,17 @@ public class QuestionDTO {
 
     @NotNull(message = "Категория вопроса должна присутствовать")
     @Schema(description = "Категория")
-    CategoryType categoryType;
+    CategoryDTO category;
 
     @NotNull
     List<AnswerDTO> answers;
 
-    public QuestionDTO(String name, String description, String imageUrl, DifficultyType difficultyType, CategoryType categoryType, List<AnswerDTO> answers) {
+    public QuestionDTO(String name, String description, String imageUrl, DifficultyType difficultyType, CategoryDTO category, List<AnswerDTO> answers) {
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
         this.difficultyType = difficultyType;
-        this.categoryType = categoryType;
+        this.category = category;
         this.answers = answers;
     }
 
@@ -86,12 +85,12 @@ public class QuestionDTO {
         this.difficultyType = difficultyType;
     }
 
-    public CategoryType getCategoryType() {
-        return categoryType;
+    public CategoryDTO getCategory() {
+        return category;
     }
 
-    public void setCategoryType(CategoryType categoryType) {
-        this.categoryType = categoryType;
+    public void setCategory(CategoryDTO category) {
+        this.category = category;
     }
 
     public List<AnswerDTO> getAnswers() {

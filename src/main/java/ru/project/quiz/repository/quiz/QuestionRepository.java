@@ -8,6 +8,7 @@ import ru.project.quiz.domain.entity.quiz.Question;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface QuestionRepository extends JpaRepository<Question,Long>, QuestionRepositoryCustom {
     @Override
@@ -17,4 +18,6 @@ public interface QuestionRepository extends JpaRepository<Question,Long>, Questi
     @Query(value = "SELECT * FROM Questions WHERE category_type IN (:category) ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
     List<Question> getListQuestionsBySampleName(@Param("limit") int limit,
                                                 @Param("category") List<String> category);
+    Set<Question> getQuestionsByCategory_CategoryName(String categoryName);
+
 }

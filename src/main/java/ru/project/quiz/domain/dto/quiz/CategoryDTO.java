@@ -5,7 +5,7 @@ import ru.project.quiz.domain.enums.question.CategoryType;
 
 @Schema(description = "Сущность категории")
 public class CategoryDTO {
-    private long id;
+    private String categoryName;
 
     private CategoryType category;
 
@@ -16,12 +16,12 @@ public class CategoryDTO {
     public CategoryDTO() {
     }
 
-    public long getId() {
-        return id;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public CategoryType getCategory() {

@@ -1,17 +1,24 @@
 package ru.project.quiz.domain.entity.quiz;
 
-import ru.project.quiz.domain.entity.BaseEntity;
 import ru.project.quiz.domain.enums.question.CategoryType;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
 @Table(name = "categories")
-public class Category extends BaseEntity {
+public class Category {
+
+    @Id
+    @Column(name = "id")
+    @NotEmpty
+    private String categoryName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "name")
+    @NotNull
     private CategoryType category;
 
     @ManyToOne
@@ -38,12 +45,12 @@ public class Category extends BaseEntity {
         return Objects.hash(category, quizSample);
     }
 
-    public long getId() {
-        return id;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public CategoryType getCategory() {

@@ -11,6 +11,7 @@ import ru.project.quiz.handler.response.Response;
 import ru.project.quiz.service.quiz.QuestionService;
 
 import javax.validation.Valid;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/question")
@@ -30,6 +31,11 @@ public class QuestionController {
         QuestionDTO questionDTO = questionService.getRandomQuestion();
         System.out.println(questionService.getRandomQuestion());
         return new ResponseEntity<>(questionDTO, HttpStatus.OK);
+    }
+    @Operation(summary = "Получение вопросов по категории", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping
+    public ResponseEntity<Set<QuestionDTO>> getQuestionByCategory(@RequestParam(name = "category") String category) {
+        return new ResponseEntity<>(questionService.getQuestionByCategory(category), HttpStatus.OK);
     }
 
     @Operation(summary = "Добавление вопроса", security = @SecurityRequirement(name = "bearerAuth"))

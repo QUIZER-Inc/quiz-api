@@ -1,7 +1,6 @@
 package ru.project.quiz.domain.entity.quiz;
 
 import ru.project.quiz.domain.entity.BaseEntity;
-import ru.project.quiz.domain.enums.question.CategoryType;
 import ru.project.quiz.domain.enums.question.DifficultyType;
 
 import javax.persistence.*;
@@ -25,20 +24,19 @@ public class Question extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DifficultyType difficultyType;
 
-    @Column(name = "category_type")
-    @Enumerated(EnumType.STRING)
-    private CategoryType categoryType;
+    @OneToOne
+    private Category category;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
     private List<Answer> answers;
 
-    public Question(String name, String description, String imageUrl, DifficultyType difficultyType, CategoryType categoryType, List<Answer> answers) {
+    public Question(String name, String description, String imageUrl, DifficultyType difficultyType, Category category, List<Answer> answers) {
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
         this.difficultyType = difficultyType;
-        this.categoryType = categoryType;
+        this.category = category;
         this.answers = answers;
     }
 
@@ -50,12 +48,12 @@ public class Question extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return Objects.equals(name, question.name) && Objects.equals(description, question.description) && Objects.equals(imageUrl, question.imageUrl) && difficultyType == question.difficultyType && categoryType == question.categoryType && Objects.equals(answers, question.answers);
+        return Objects.equals(name, question.name) && Objects.equals(description, question.description) && Objects.equals(imageUrl, question.imageUrl) && difficultyType == question.difficultyType && category == question.category && Objects.equals(answers, question.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, imageUrl, difficultyType, categoryType, answers);
+        return Objects.hash(name, description, imageUrl, difficultyType, category, answers);
     }
 
     public long getId() {
@@ -74,7 +72,7 @@ public class Question extends BaseEntity {
                 ", description='" + description + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", difficultyType=" + difficultyType +
-                ", categoryType=" + categoryType +
+                ", category=" + category +
                 ", answers=" + answers +
                 '}';
     }
@@ -111,12 +109,12 @@ public class Question extends BaseEntity {
         this.difficultyType = difficultyType;
     }
 
-    public CategoryType getCategoryType() {
-        return categoryType;
+    public Category getCategoryType() {
+        return category;
     }
 
-    public void setCategoryType(CategoryType categoryType) {
-        this.categoryType = categoryType;
+    public void setCategoryType(Category category) {
+        this.category = category;
     }
 
     public List<Answer> getAnswers() {
