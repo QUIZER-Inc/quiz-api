@@ -59,7 +59,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final static String questionIsExistError = "Question {} is exist";
     private final static String sizeError = "Кол-во правильных ответов должно быть 1";
-    private final static String correctError = "Кол-во вопросов должно быть 2 и более";
+    private final static String correctError = "Кол-во вопросов должно быть 2 и более";//TODO надо ли делать проверку на количество входных вопросов
 
     @Override
     public void saveQuestion(ArrayList<QuestionDTO> questionDtoList) {
