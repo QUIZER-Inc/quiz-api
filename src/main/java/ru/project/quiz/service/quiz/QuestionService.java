@@ -2,10 +2,13 @@ package ru.project.quiz.service.quiz;
 
 import ru.project.quiz.domain.dto.quiz.QuestionDTO;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public interface QuestionService {
     QuestionDTO getRandomQuestion();
 
-    void saveQuestion(QuestionDTO questionDTO);
+    void saveQuestion(ArrayList<QuestionDTO> questionDtoSet);
 
     void deleteQuestion(long id);
 

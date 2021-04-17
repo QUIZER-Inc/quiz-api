@@ -22,7 +22,11 @@ import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -53,39 +57,54 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
 
-    private final static String questionIsExistError = "Question is exist";
-    private final static String correctOrSizeError = "Кол-во правильных ответов должно быть 1, а вопросов 2 и больше";
+    private final static String questionIsExistError = "Question {} is exist";
+    private final static String sizeError = "Кол-во правильных ответов должно быть 1";
+    private final static String correctError = "Кол-во вопросов должно быть 2 и более";
 
     @Override
-    public void saveQuestion(QuestionDTO questionDTO) {
-        log.info("Попытка сохранить вопрос");
-        Set<ConstraintViolation<QuestionDTO>> violations = validator.validate(questionDTO);
+    public void saveQuestion(ArrayList<QuestionDTO> questionDtoList) {
+        log.info("Попытка сохранить список вопросов");
 
-        if (!violations.isEmpty()) {
-            log.error(violations.toString());
-            throw new ConstraintViolationException(violations);
+        //Валидация созданных QuestionDto
+        for (QuestionDTO dto:questionDtoList) {
+            Set<ConstraintViolation<QuestionDTO>> validateSet = validator.validate(dto);
+            if (!validateSet.isEmpty()) {
+                log.error(validateSet.toString());
+                throw new ConstraintViolationException(validateSet);
+            }
         }
+        //проверка на корректность ответов
+        List<QuestionDTO> dtoList = questionDtoList.stream()
+                .filter(questionDTO -> {
+                    if (!questionDTO.getAnswers().isEmpty()||questionDTO.getAnswers().size()<2){
+                        return true;
+                    } else {
+                        log.info(sizeError);
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
 
-        Question question = questionMapper.questionFromQuestionDTO(questionDTO);
+        //Преобразуем из List в Set и сразу мапим на Set entity c проверкой налчия Question в БД
+        HashSet<Question> questionSet = (HashSet<Question>) new HashSet<>(dtoList)
+                .stream()
+                .map(questionMapper::questionFromQuestionDTO)
+                .filter(question -> {
+                    if (!isExistQuestion(question)){
+                        log.info(questionIsExistError, question.getName());
+                    }
+                    return isExistQuestion(question);
+                })
+                .collect(Collectors.toSet());
 
-        if (isExistQuestion(question)) {
-            log.error(questionIsExistError);
-            throw new QuestionIsExistException(questionIsExistError);
-        }
-
-        long countOfRightAnswers = questionDTO.getAnswers().stream()
-                .map(AnswerDTO::isCorrectAnswer)
-                .filter(correct -> correct)
-                .count();
-
-        if (countOfRightAnswers != 1 || questionDTO.getAnswers().size() < 2) {
-            log.error(correctOrSizeError);
-            throw new QuestionCreationException(correctOrSizeError);
-        }
-
-        question.setAnswers(answerMapper.listAnswersFromListAnswersDTO(questionDTO.getAnswers()));
-        Question savedQuestion = questionRepository.save(question);
-        log.info("Вопрос с id: {} сохранен", savedQuestion);
+        //Сохраняем в БД наши Question
+//        HashSet<Question> savedQuestion = (HashSet<Question>) questionRepository.saveAll(questionSet);
+        questionSet.stream()
+                .peek(question -> {
+                    questionRepository.save(question);
+                    log.info("Вопрос с id {} сохранен",question);
+                })
+                .collect(Collectors.toSet());
     }
 
     @Override
