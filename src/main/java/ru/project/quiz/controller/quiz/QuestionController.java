@@ -45,8 +45,8 @@ public class QuestionController {
 
     @Operation(summary = "Добавление вопросов",security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(ADD_QUESTIONS)
-    public ResponseEntity<Response> addQuestion(@RequestBody ArrayList<QuestionDTO> questionDtoSet) {
-        questionService.saveQuestion(questionDtoSet);
+    public ResponseEntity<Response> addQuestion(@RequestBody ArrayList<QuestionDTO> questionDtoList) {
+        questionService.saveQuestion(questionDtoList);
         return new ResponseEntity<>(new Response("Questions is added"), HttpStatus.OK);
     }
 
