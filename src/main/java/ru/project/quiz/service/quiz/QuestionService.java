@@ -3,7 +3,6 @@ package ru.project.quiz.service.quiz;
 import ru.project.quiz.domain.dto.quiz.QuestionDTO;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public interface QuestionService {
     QuestionDTO getRandomQuestion();
