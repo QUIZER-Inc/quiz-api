@@ -8,11 +8,11 @@ import java.util.HashSet;
 public interface QuestionService {
     QuestionDTO getRandomQuestion();
 
-    void saveQuestion(ArrayList<QuestionDTO> questionDtoSet);
-
-    void saveQuestion(QuestionDTO questionDto);
+    void saveQuestion(QuestionDTO questionDTO);
 
     void deleteQuestion(long id);
 
     void editQuestion(QuestionDTO questionDTO);
+
+    void saveListofQuestions(ArrayList<QuestionDTO> questionDTOList);
 }

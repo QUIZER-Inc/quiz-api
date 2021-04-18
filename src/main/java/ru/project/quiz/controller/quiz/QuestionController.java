@@ -12,7 +12,6 @@ import ru.project.quiz.service.quiz.QuestionService;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 @RestController
 @RequestMapping("/api/question")
@@ -20,8 +19,8 @@ import java.util.HashSet;
 public class QuestionController {
 
     private static final String RANDOM_QUESTION = "/random";
-    private static final String ADD_QUESTION = "/admin/add/question";
-    private static final String ADD_QUESTIONS = "/admin/add/questions";
+    private static final String ADD_QUESTION = "/admin/question-add";
+    private static final String ADD_QUESTIONS = "/admin/questions-add";
     private static final String DELETE_QUESTION = "/admin/delete";
     private static final String EDIT_QUESTION = "/admin/edit";
 
@@ -35,19 +34,18 @@ public class QuestionController {
         return new ResponseEntity<>(questionDTO, HttpStatus.OK);
     }
 
-
-    @Operation(summary = "Добавление вопроса",security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Добавление вопроса", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(ADD_QUESTION)
-    public ResponseEntity<Response> addQuestion(@RequestBody QuestionDTO questionDto) {
-        questionService.saveQuestion(questionDto);
+    public ResponseEntity<Response> addQuestion(@RequestBody QuestionDTO questionDTO) {
+        questionService.saveQuestion(questionDTO);
         return new ResponseEntity<>(new Response("Question is added"), HttpStatus.OK);
     }
 
-    @Operation(summary = "Добавление вопросов",security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Добавление вопросов", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(ADD_QUESTIONS)
-    public ResponseEntity<Response> addQuestion(@RequestBody ArrayList<QuestionDTO> questionDtoList) {
-        questionService.saveQuestion(questionDtoList);
-        return new ResponseEntity<>(new Response("Questions is added"), HttpStatus.OK);
+    public ResponseEntity<Response> addQuestionList(@RequestBody ArrayList<QuestionDTO> questionDTOList) {
+        questionService.saveListofQuestions(questionDTOList);
+        return new ResponseEntity<>(new Response("Question is added"), HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление вопроса", security = @SecurityRequirement(name = "bearerAuth"))

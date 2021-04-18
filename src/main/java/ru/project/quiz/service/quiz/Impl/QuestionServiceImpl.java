@@ -24,7 +24,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,6 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final AnswerRepository answerRepository;
     private final AnswerMapper answerMapper;
     private final Validator validator;
+    private long count;
 
     Logger log = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
@@ -44,6 +44,7 @@ public class QuestionServiceImpl implements QuestionService {
         this.answerRepository = answerRepository;
         this.answerMapper = answerMapper;
         this.validator = validator;
+        count=0l;
     }
 
     @PostConstruct
@@ -57,11 +58,10 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
 
-    private final static String questionIsExistError = "Question {} is exist";
-    private final static String sizeError = "Кол-во правильных ответов должно быть 1";
-    private final static String correctError = "Кол-во вопросов должно быть 2 и более";//TODO надо ли делать проверку на количество входных вопросов
+    private final static String questionIsExistError = "Question is exist";
+    private final static String correctOrSizeError = "Кол-во правильных ответов должно быть 1, а вопросов 2 и больше";
 
-
+    @Override
     public void saveQuestion(QuestionDTO questionDTO) {
         log.info("Попытка сохранить вопрос");
         Set<ConstraintViolation<QuestionDTO>> violations = validator.validate(questionDTO);
@@ -84,8 +84,8 @@ public class QuestionServiceImpl implements QuestionService {
                 .count();
 
         if (countOfRightAnswers != 1 || questionDTO.getAnswers().size() < 2) {
-            log.error(sizeError);
-            throw new QuestionCreationException(sizeError);
+            log.error(correctOrSizeError);
+            throw new QuestionCreationException(correctOrSizeError);
         }
 
         question.setAnswers(answerMapper.listAnswersFromListAnswersDTO(questionDTO.getAnswers()));
@@ -93,47 +93,23 @@ public class QuestionServiceImpl implements QuestionService {
         log.info("Вопрос с id: {} сохранен", savedQuestion);
     }
 
-    @Override
-    public void saveQuestion(ArrayList<QuestionDTO> questionDtoList) {
-        log.info("Попытка сохранить список вопросов");
-
-
-        for (QuestionDTO dto:questionDtoList) {
-            Set<ConstraintViolation<QuestionDTO>> validateSet = validator.validate(dto);
-            if (!validateSet.isEmpty()) {
-                log.error(validateSet.toString());
-                throw new ConstraintViolationException(validateSet);
-            }
-        }
-
-        List<QuestionDTO> dtoList = questionDtoList.stream()
-                .filter(questionDTO -> {
-                    if (!questionDTO.getAnswers().isEmpty()||questionDTO.getAnswers().size()<2){
-                        return true;
-                    } else {
-                        log.info(sizeError);
-                        return false;
-                    }
-                })
-                .collect(Collectors.toList());
-
-        HashSet<Question> questionSet = (HashSet<Question>) new HashSet<>(dtoList)
+    public void saveListofQuestions(ArrayList<QuestionDTO> questionDTOList ){
+        Set<QuestionDTO> questionDTOSet=new HashSet<>(questionDTOList)
                 .stream()
-                .map(questionMapper::questionFromQuestionDTO)
-                .filter(question -> {
-                    if (!isExistQuestion(question)){
-                        log.info(questionIsExistError, question.getName());
+                .filter(questionDTO -> {
+                    if (isExistQuestion(questionMapper.questionFromQuestionDTO(questionDTO))){
+                        count++;
+                        log.info("This question with name {} is exist", questionDTO.getName());
+                        return false;
+                    }else {
+                        saveQuestion(questionDTO);
+                        return true;
                     }
-                    return isExistQuestion(question);
                 })
                 .collect(Collectors.toSet());
-
-        questionSet.stream()
-                .peek(question -> {
-                    questionRepository.save(question);
-                    log.info("Вопрос с id {} сохранен",question);
-                })
-                .collect(Collectors.toSet());
+        if (count>0){
+            log.info("Количество одинаковых вопросов которые пытались добавить: {}", count);
+        }
     }
 
     @Override
