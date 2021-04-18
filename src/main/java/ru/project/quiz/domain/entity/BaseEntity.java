@@ -1,5 +1,6 @@
 package ru.project.quiz.domain.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,10 +17,12 @@ public abstract class BaseEntity {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     protected LocalDateTime updatedAt;
 
     public BaseEntity(LocalDateTime createdAt, LocalDateTime updatedAt) {

@@ -1,64 +1,35 @@
 package ru.project.quiz.domain.entity.quiz;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import ru.project.quiz.domain.entity.BaseEntity;
 import ru.project.quiz.domain.enums.question.CategoryType;
 
 import javax.persistence.*;
-import java.util.Objects;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@Data
 @Table(name = "categories")
 public class Category extends BaseEntity {
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "name")
-    private CategoryType category;
+    @NotBlank
+    private String name;
 
-    @ManyToOne
-    private QuizSample quizSample;
-
-    public Category(CategoryType category, QuizSample quizSample) {
-        this.category = category;
-        this.quizSample = quizSample;
-    }
-
-    public Category() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Category category1 = (Category) o;
-        return category == category1.category && Objects.equals(quizSample, category1.quizSample);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(category, quizSample);
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public CategoryType getCategory() {
-        return category;
-    }
-
-    public void setCategory(CategoryType category) {
-        this.category = category;
-    }
-
-    public QuizSample getQuizSample() {
-        return quizSample;
-    }
-
-    public void setQuizSample(QuizSample quizSample) {
-        this.quizSample = quizSample;
-    }
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "category_sub_category",
+            joinColumns = @JoinColumn(name = "category_id")
+    )
+    @Column(name = "sub_category")
+    @Enumerated(EnumType.STRING)
+    private List<CategoryType> subCategories;
 }

@@ -2,6 +2,7 @@ package ru.project.quiz.controller.quiz;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -32,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {"PROFILE=dev"})
+@Disabled
 public class RegistrationControllerTest {
 
     private final ObjectMapper om = new ObjectMapper();
@@ -46,10 +48,13 @@ public class RegistrationControllerTest {
 
     private ITUserDTO itUserDTO;
 
+    @Disabled
     @BeforeEach
     public void setUp() {
-        itUserDTO = new ITUserDTO("test","test","email@test.ru", Collections.singleton(new RoleDTO("test", Collections.EMPTY_SET)));
+        itUserDTO = new ITUserDTO("test", "test", "email@test.ru", Collections.singleton(new RoleDTO("test", Collections.EMPTY_SET)));
     }
+
+    @Disabled
     @WithMockUser("test")
     @Test
     public void registration() throws Exception {

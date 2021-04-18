@@ -9,4 +9,4 @@ REST API для генерации тестов на любые тематики
 - Spring Boot
 ***
 ## Текущая схема БД
-![схема](https://i.ibb.co/5LFgb5c/image.png)
+![image](https://user-images.githubusercontent.com/60842252/115151982-f52f4400-a077-11eb-8a00-080b80727062.png)

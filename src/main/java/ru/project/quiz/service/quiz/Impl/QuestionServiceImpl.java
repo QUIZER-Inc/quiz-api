@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -50,6 +51,14 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = questionRepository.getRandomQuestion()
                 .orElseThrow(() -> new QuestionNotFoundException("Question list is empty"));
         return questionMapper.questionDTOFromQuestion(question);
+    }
+    public Set<QuestionDTO> getQuestionByCategoryName(String categoryName) {
+        Question question = questionRepository.getRandomQuestion()
+                .orElseThrow(() -> new QuestionNotFoundException("Question list is empty"));
+        Set<Question> questions = questionRepository.getQuestionsByCategoryName(categoryName);
+        Set<QuestionDTO> questionDTOS = new HashSet<>();
+        questions.forEach(question1 -> questionDTOS.add(questionMapper.questionDTOFromQuestion(question)));
+        return questionDTOS;
     }
 
 
