@@ -32,9 +32,4 @@ public class Category extends BaseEntity {
     @Column(name = "sub_category")
     @Enumerated(EnumType.STRING)
     private List<CategoryType> subCategories;
-
-    @ManyToOne
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private QuizSample quizSample;
-
 }
