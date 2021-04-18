@@ -34,7 +34,7 @@ public class QuestionController {
     @Operation(summary = "Получение вопросов по категории", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping
     public ResponseEntity<Set<QuestionDTO>> getQuestionByCategory(@RequestParam(name = "category") String category) {
-        return new ResponseEntity<>(questionService.getQuestionByCategory(category), HttpStatus.OK);
+        return new ResponseEntity<>(questionService.getQuestionByCategoryName(category), HttpStatus.OK);
     }
 
     @Operation(summary = "Добавление вопроса", security = @SecurityRequirement(name = "bearerAuth"))

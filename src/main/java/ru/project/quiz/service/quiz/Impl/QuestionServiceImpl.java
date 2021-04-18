@@ -52,10 +52,10 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new QuestionNotFoundException("Question list is empty"));
         return questionMapper.questionDTOFromQuestion(question);
     }
-    public Set<QuestionDTO> getQuestionByCategory(String category) {
+    public Set<QuestionDTO> getQuestionByCategoryName(String categoryName) {
         Question question = questionRepository.getRandomQuestion()
                 .orElseThrow(() -> new QuestionNotFoundException("Question list is empty"));
-        Set<Question> questions = questionRepository.getQuestionsByCategory_CategoryName(category);
+        Set<Question> questions = questionRepository.getQuestionsByCategoryName(categoryName);
         Set<QuestionDTO> questionDTOS = new HashSet<>();
         questions.forEach(question1 -> questionDTOS.add(questionMapper.questionDTOFromQuestion(question)));
         return questionDTOS;

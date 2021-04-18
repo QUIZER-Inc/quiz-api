@@ -7,7 +7,7 @@ import java.util.Set;
 public interface QuestionService {
     QuestionDTO getRandomQuestion();
 
-    Set<QuestionDTO> getQuestionByCategory(String category);
+    Set<QuestionDTO> getQuestionByCategoryName(String category);
 
     void saveQuestion(QuestionDTO questionDTO);
 

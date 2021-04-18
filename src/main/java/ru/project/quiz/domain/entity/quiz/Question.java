@@ -1,13 +1,20 @@
 package ru.project.quiz.domain.entity.quiz;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import ru.project.quiz.domain.entity.BaseEntity;
+import ru.project.quiz.domain.enums.ituser.PermissionType;
+import ru.project.quiz.domain.enums.question.CategoryType;
 import ru.project.quiz.domain.enums.question.DifficultyType;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
+@Data
+@AllArgsConstructor
 @Table(name = "questions")
 public class Question extends BaseEntity {
 
@@ -24,21 +31,21 @@ public class Question extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DifficultyType difficultyType;
 
-    @OneToOne
-    private Category category;
+    @Column(name = "category_name")
+    private String categoryName;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "question_sub_category",
+            joinColumns = @JoinColumn(name = "question_id")
+    )
+    @Column(name = "sub_category")
+    @Enumerated(EnumType.STRING)
+    private Set<CategoryType> subCategories;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
     private List<Answer> answers;
-
-    public Question(String name, String description, String imageUrl, DifficultyType difficultyType, Category category, List<Answer> answers) {
-        this.name = name;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.difficultyType = difficultyType;
-        this.category = category;
-        this.answers = answers;
-    }
 
     public Question() {
     }
@@ -48,12 +55,12 @@ public class Question extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return Objects.equals(name, question.name) && Objects.equals(description, question.description) && Objects.equals(imageUrl, question.imageUrl) && difficultyType == question.difficultyType && category == question.category && Objects.equals(answers, question.answers);
+        return Objects.equals(name, question.name) && Objects.equals(description, question.description) && Objects.equals(imageUrl, question.imageUrl) && difficultyType == question.difficultyType && Objects.equals(categoryName, question.categoryName) && Objects.equals(subCategories, question.subCategories) && Objects.equals(answers, question.answers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, imageUrl, difficultyType, category, answers);
+        return Objects.hash(name, description, imageUrl, difficultyType, categoryName, subCategories, answers);
     }
 
     public long getId() {
@@ -68,60 +75,15 @@ public class Question extends BaseEntity {
     public String toString() {
         return "Question{" +
                 "id=" + id +
+                ", updatedAt=" + updatedAt +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", difficultyType=" + difficultyType +
-                ", category=" + category +
+                ", categoryName='" + categoryName + '\'' +
+                ", subCategories=" + subCategories +
                 ", answers=" + answers +
                 '}';
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public DifficultyType getDifficultyType() {
-        return difficultyType;
-    }
-
-    public void setDifficultyType(DifficultyType difficultyType) {
-        this.difficultyType = difficultyType;
-    }
-
-    public Category getCategoryType() {
-        return category;
-    }
-
-    public void setCategoryType(Category category) {
-        this.category = category;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
-    }
 }

@@ -19,11 +19,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public Category getCategory(String category) {
-        return categoryRepository.findByCategoryName(category);
+        return categoryRepository.findByName(category);
     }
 
     public CategoryDTO getCategoryDTO(String category) {
-        return categoryMapper.categoryDTOFromCategory(categoryRepository.findByCategoryName(category));
+        return categoryMapper.categoryDTOFromCategory(categoryRepository.findByName(category));
     }
 
     public Category addCategory(Category category) {
@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public void deleteCategory(String category) {
-        categoryRepository.deleteByCategoryName(category);
+        categoryRepository.deleteByName(category);
     }
 
     public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
