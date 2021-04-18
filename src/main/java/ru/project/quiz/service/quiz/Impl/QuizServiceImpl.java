@@ -85,7 +85,9 @@ public class QuizServiceImpl implements QuizService {
 
         List<Question> listOfRandomQuestions = questionRepository.getListQuestionsBySampleName(
                 numberOfQuestions,
-                quizSample.getCategories().stream().map(category -> category.getCategory().name()).collect(Collectors.toList()));
+                quizSample.getSubCategories().stream()
+                        .map(category -> category.name())
+                        .collect(Collectors.toList()));
         if (listOfRandomQuestions.isEmpty()) {
             log.error(getRandomQuestionsError);
             throw new QuestionNotFoundException(getRandomQuestionsError);

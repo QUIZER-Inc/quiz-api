@@ -9,4 +9,5 @@ public interface QuestionMapper {
     Question questionFromQuestionDTO(QuestionDTO questionDTO);
 
     QuestionDTO questionDTOFromQuestion(Question question);
+
 }
