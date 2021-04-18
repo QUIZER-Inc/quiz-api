@@ -13,31 +13,27 @@ import ru.project.quiz.service.quiz.QuizSampleService;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/quiz_sample")
+@RequestMapping("/api/quiz-sample")
 @Tag(name = "Контроллер сэмплов")
 public class QuizSampleController {
     public final QuizSampleService quizSampleService;
 
-    private static final String ADD_SAMPLE = "/admin/add";
-    private static final String DELETE_SAMPLE = "/admin/delete";
-    private static final String EDIT_SAMPLE = "/admin/edit";
-
     @Operation(summary = "Добавление сэмпла", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(ADD_SAMPLE)
+    @PostMapping
     public ResponseEntity<Response> addSample(@Valid @RequestBody QuizSampleDTO quizSampleDTO) {
         quizSampleService.saveSample(quizSampleDTO);
         return new ResponseEntity<>(new Response("Сэмпл добавлен"), HttpStatus.OK);
     }
 
     @Operation(summary = "Редактирование сэмпла", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(EDIT_SAMPLE)
+    @PatchMapping
     public ResponseEntity<Response> editQuestion(@Valid @RequestBody QuizSampleDTO quizSampleDTO, @RequestParam long id) {
         quizSampleService.editSample(quizSampleDTO, id);
         return new ResponseEntity<>(new Response("QuizSample has been edited"), HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление сэмпла", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(DELETE_SAMPLE)
+    @DeleteMapping
     public ResponseEntity<Response> deleteQuestion(@RequestParam long id) {
         quizSampleService.deleteSample(id);
         return new ResponseEntity<>(new Response("QuizSample has been deleted"), HttpStatus.OK);
