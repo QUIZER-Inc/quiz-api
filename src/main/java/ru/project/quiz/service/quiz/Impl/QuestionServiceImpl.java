@@ -1,6 +1,7 @@
 package ru.project.quiz.service.quiz.Impl;
 
 
+import org.aspectj.weaver.patterns.TypePatternQuestions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -22,8 +23,10 @@ import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -32,6 +35,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final AnswerRepository answerRepository;
     private final AnswerMapper answerMapper;
     private final Validator validator;
+    private long count;
 
     Logger log = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
@@ -41,7 +45,10 @@ public class QuestionServiceImpl implements QuestionService {
         this.answerRepository = answerRepository;
         this.answerMapper = answerMapper;
         this.validator = validator;
+        count=0L;
     }
+
+
 
     @PostConstruct
     private void getAllTablesID() {
@@ -95,6 +102,25 @@ public class QuestionServiceImpl implements QuestionService {
         question.setAnswers(answerMapper.listAnswersFromListAnswersDTO(questionDTO.getAnswers()));
         Question savedQuestion = questionRepository.save(question);
         log.info("Вопрос с id: {} сохранен", savedQuestion);
+    }
+
+    @Override
+    public void saveListQuestion(ArrayList<QuestionDTO> questionDTOList) {
+        Set<QuestionDTO> questionDTOSet = new HashSet<>(questionDTOList)
+                .stream()
+                .filter(questionDTO -> {
+                    if (isExistQuestion(questionMapper.questionFromQuestionDTO(questionDTO))){
+                        log.info("Question with name {} is exist",questionDTO.getName());
+                        count++;
+                        return false;
+                    }else {
+                        saveQuestion(questionDTO);
+                        return true;
+                    }
+                }).collect(Collectors.toSet());
+        if (count>0){
+            log.info("Quantity of dublicate questions is: {}",count);
+        }
     }
 
     @Override

@@ -11,6 +11,7 @@ import ru.project.quiz.handler.response.Response;
 import ru.project.quiz.service.quiz.QuestionService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Set;
 
 @RestController
@@ -19,6 +20,7 @@ import java.util.Set;
 public class QuestionController {
 
     private static final String RANDOM_QUESTION = "/random";
+    private static final String ADD_LIST_QUESTIONS = "/list";
 
     private final QuestionService questionService;
 
@@ -39,6 +41,13 @@ public class QuestionController {
     @PostMapping
     public ResponseEntity<Response> addQuestion(@RequestBody QuestionDTO questionDTO) {
         questionService.saveQuestion(questionDTO);
+        return new ResponseEntity<>(new Response("Question is added"), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Добавление вопроса", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(ADD_LIST_QUESTIONS)
+    public ResponseEntity<Response> addListQuestion(@RequestBody ArrayList<QuestionDTO> questionDTOList) {
+        questionService.saveListQuestion(questionDTOList);
         return new ResponseEntity<>(new Response("Question is added"), HttpStatus.OK);
     }
 
