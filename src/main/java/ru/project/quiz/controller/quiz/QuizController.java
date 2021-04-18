@@ -16,11 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api/quiz")
 public class QuizController {
     private final QuizService quizService;
-    private final static String CREATE_QUIZ = "/create";
-    private final static String FINISH_QUIZ = "/finish";
 
     @Operation(summary = "Создание квиза (теста)", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(CREATE_QUIZ)
+    @GetMapping
     public ResponseEntity<QuizDTO> getQuiz(HttpServletRequest httpServletRequest, @RequestParam int numberOfQuestions,
                                            @RequestParam String quizName) {
         QuizDTO quiz = quizService.createQuiz(numberOfQuestions, quizName);
@@ -29,7 +27,7 @@ public class QuizController {
 
 
     @Operation(summary = "Завершение квиза(теста)", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(FINISH_QUIZ)
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<QuizDTO> finishQuiz(@RequestBody QuizDTO quizDTO) {
         return new ResponseEntity<>(quizService.finishQuiz(quizDTO), HttpStatus.OK);

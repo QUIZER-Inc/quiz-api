@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.project.quiz.service.ituser.ITUserService;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @Tag(name = "Админка")
 public class AdminController {
 
     public final ITUserService userService;
 
-    public final String SET_ROLE = "/give_role";
+    public final String SET_ROLE = "/give-role";
 
     @Operation(summary = "Дать роль пользователю", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(SET_ROLE)
