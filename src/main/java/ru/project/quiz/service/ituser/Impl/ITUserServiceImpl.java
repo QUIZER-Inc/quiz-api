@@ -17,7 +17,6 @@ import ru.project.quiz.repository.ituser.RoleRepository;
 import ru.project.quiz.repository.ituser.UserRepository;
 import ru.project.quiz.service.ituser.ITUserService;
 import ru.project.quiz.service.mail.MailService;
-import ru.project.quiz.service.quiz.Impl.QuizServiceImpl;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -52,6 +51,28 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
             return userMapper.userDTOFromUser(optionalUser.get());
         }
         throw new UsernameNotFoundException("User not found, sorry");
+    }
+
+    @Override
+    public ITUserDTO findUserByUsername(String name) {
+        Optional<ITUser> optUser = userRepository.findUserByUsername(name);
+        if(optUser.isEmpty()){
+            throw new RuntimeException("Данный пользователь не найден!");
+        }
+        return userMapper.userDTOFromUser(optUser.get());
+    }
+
+    @Override
+    public void editUser(ITUser user) {
+        Optional<ITUser> optUser = userRepository.findById(user.getId());
+        if (optUser.isPresent()){
+            if (bCryptPasswordEncoder.matches(user.getPassword(), optUser.get().getPassword())){
+                user.setPassword(optUser.get().getPassword());
+            } else {
+                user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            }
+            userRepository.save(user);
+        }
     }
 
     @Override

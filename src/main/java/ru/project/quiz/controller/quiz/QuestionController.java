@@ -7,10 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.project.quiz.domain.dto.quiz.QuestionDTO;
+import ru.project.quiz.domain.dto.response.QuestionResponse;
 import ru.project.quiz.handler.response.Response;
 import ru.project.quiz.service.quiz.QuestionService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Set;
 
 @RestController
@@ -35,11 +37,11 @@ public class QuestionController {
         return new ResponseEntity<>(questionService.getQuestionByCategoryName(category), HttpStatus.OK);
     }
 
-    @Operation(summary = "Добавление вопроса", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Добавление списка вопросов", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
-    public ResponseEntity<Response> addQuestion(@RequestBody QuestionDTO questionDTO) {
-        questionService.saveQuestion(questionDTO);
-        return new ResponseEntity<>(new Response("Question is added"), HttpStatus.OK);
+    public ResponseEntity<QuestionResponse> addListQuestion(@RequestBody ArrayList<QuestionDTO> questionDTOList) {
+        QuestionResponse questionResponse = questionService.saveListQuestions(questionDTOList);
+        return new ResponseEntity<>(questionResponse, HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление вопроса", security = @SecurityRequirement(name = "bearerAuth"))

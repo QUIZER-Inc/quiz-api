@@ -1,7 +1,9 @@
 package ru.project.quiz.service.quiz;
 
 import ru.project.quiz.domain.dto.quiz.QuestionDTO;
+import ru.project.quiz.domain.dto.response.QuestionResponse;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public interface QuestionService {
@@ -9,7 +11,9 @@ public interface QuestionService {
 
     Set<QuestionDTO> getQuestionByCategoryName(String category);
 
-    void saveQuestion(QuestionDTO questionDTO);
+    int saveQuestion(QuestionDTO questionDTO);
+
+    QuestionResponse saveListQuestions(ArrayList<QuestionDTO> questionDTOList);
 
     void deleteQuestion(long id);
 

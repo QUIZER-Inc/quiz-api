@@ -20,7 +20,7 @@ public class ITUserDTO implements UserDetails {
     @Schema(description = "Имя пользователя")
     private String username;
 
-    @Schema(description = "Пароль")
+    @Schema(description = "Пароль", accessMode = Schema.AccessMode.READ_ONLY)
     @NotBlank(message = "Пароль не должен быть пустым")
     private String password;
 
