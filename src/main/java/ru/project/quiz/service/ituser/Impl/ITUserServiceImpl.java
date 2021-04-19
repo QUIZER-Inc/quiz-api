@@ -64,8 +64,15 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
 
     @Override
     public void editUser(ITUser user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        Optional<ITUser> optUser = userRepository.findById(user.getId());
+        if (optUser.isPresent()){
+            if (bCryptPasswordEncoder.matches(user.getPassword(), optUser.get().getPassword())){
+                user.setPassword(optUser.get().getPassword());
+            } else {
+                user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            }
+            userRepository.save(user);
+        }
     }
 
     @Override

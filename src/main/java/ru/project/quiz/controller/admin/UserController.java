@@ -12,7 +12,7 @@ import ru.project.quiz.handler.response.Response;
 import ru.project.quiz.service.ituser.ITUserService;
 
 @RestController
-@RequestMapping("/api/admin/users")
+@RequestMapping("/api/users")
 @Tag(name = "Контроллер пользователей")
 public class UserController {
 
@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @Operation(summary = "Редактирование пользователя по username", security = @SecurityRequirement(name = "bearerAuth"))
-    @PatchMapping("/")
+    @PatchMapping
     public ResponseEntity<Response> editUserByName(@RequestBody ITUser user) {
         userService.editUser(user);
         return new ResponseEntity<>(new Response("User has been edited"), HttpStatus.OK);
