@@ -1,25 +1,19 @@
 spring:
   jpa:
-    database: postgresql
     show-sql: true
     hibernate:
       ddl-auto: create
-  datasource:
-    platform: postgres
-    url: jdbc:postgresql://localhost:5432/quiz
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
   config:
     activate:
       on-profile: "dev"
 mail-sender:
   active: disable
-  email: test@mail.m
-  password: 123456
+  email: test@test.com
+  password: test
 jwt:
   secret: itquizsecrettokendev
 server:
+  port: 443
   ssl:
     key-store: src\main\resources\keystore.p12
     key-store-password: itquiz

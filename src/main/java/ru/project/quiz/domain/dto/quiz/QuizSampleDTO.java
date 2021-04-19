@@ -1,44 +1,20 @@
 package ru.project.quiz.domain.dto.quiz;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.project.quiz.domain.enums.question.CategoryType;
+
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class QuizSampleDTO {
 
     long id;
 
     String name;
 
-    List<CategoryDTO> categories;
-
-    public QuizSampleDTO(String name, List<CategoryDTO> categories) {
-        this.name = name;
-        this.categories = categories;
-    }
-
-    public QuizSampleDTO() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<CategoryDTO> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<CategoryDTO> categories) {
-        this.categories = categories;
-    }
+    List<CategoryType> subCategories;
 }

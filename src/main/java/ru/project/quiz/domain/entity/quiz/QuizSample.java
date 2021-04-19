@@ -1,11 +1,16 @@
 package ru.project.quiz.domain.entity.quiz;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import ru.project.quiz.domain.entity.BaseEntity;
+import ru.project.quiz.domain.enums.question.CategoryType;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@AllArgsConstructor
+@Data
 @Table(name = "quiz_sample")
 public class QuizSample extends BaseEntity {
 
@@ -15,48 +20,15 @@ public class QuizSample extends BaseEntity {
     @Column(name = "name", unique = true)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "quiz_sample_id")
-    private List<Category> categories;
-
-    public QuizSample(List<Quiz> quizes, String name, List<Category> categories) {
-        this.quizes = quizes;
-        this.name = name;
-        this.categories = categories;
-    }
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "quiz_sample_sub_category",
+            joinColumns = @JoinColumn(name = "quiz_sample_id")
+    )
+    @Column(name = "sub_category")
+    @Enumerated(EnumType.STRING)
+    private List<CategoryType> subCategories;
 
     public QuizSample() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public List<Quiz> getQuizes() {
-        return quizes;
-    }
-
-    public void setQuizes(List<Quiz> quizes) {
-        this.quizes = quizes;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
     }
 }

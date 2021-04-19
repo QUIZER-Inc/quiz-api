@@ -8,6 +8,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import ru.project.quiz.domain.dto.quiz.AnswerDTO;
 import ru.project.quiz.domain.dto.quiz.QuestionDTO;
+import ru.project.quiz.domain.dto.response.QuestionResponse;
 import ru.project.quiz.domain.entity.quiz.Question;
 import ru.project.quiz.handler.exception.QuestionCreationException;
 import ru.project.quiz.handler.exception.QuestionIsExistException;
@@ -18,11 +19,13 @@ import ru.project.quiz.repository.quiz.AnswerRepository;
 import ru.project.quiz.repository.quiz.QuestionRepository;
 import ru.project.quiz.service.quiz.QuestionService;
 
-import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -31,6 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final AnswerRepository answerRepository;
     private final AnswerMapper answerMapper;
     private final Validator validator;
+    private long count;
 
     Logger log = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
@@ -40,10 +44,7 @@ public class QuestionServiceImpl implements QuestionService {
         this.answerRepository = answerRepository;
         this.answerMapper = answerMapper;
         this.validator = validator;
-    }
-
-    @PostConstruct
-    private void getAllTablesID() {
+        count = 0L;
     }
 
     public QuestionDTO getRandomQuestion() {
@@ -52,25 +53,40 @@ public class QuestionServiceImpl implements QuestionService {
         return questionMapper.questionDTOFromQuestion(question);
     }
 
+    public Set<QuestionDTO> getQuestionByCategoryName(String categoryName) {
+        Question question = questionRepository.getRandomQuestion()
+                .orElseThrow(() -> new QuestionNotFoundException("Question list is empty"));
+        Set<Question> questions = questionRepository.getQuestionsByCategoryName(categoryName);
+        Set<QuestionDTO> questionDTOS = new HashSet<>();
+        questions.forEach(question1 -> questionDTOS.add(questionMapper.questionDTOFromQuestion(question)));
+        return questionDTOS;
+    }
+
 
     private final static String questionIsExistError = "Question is exist";
     private final static String correctOrSizeError = "Кол-во правильных ответов должно быть 1, а вопросов 2 и больше";
 
     @Override
-    public void saveQuestion(QuestionDTO questionDTO) {
+    /**
+     * Возвращает статус код вопроса при сохранении
+     * 0 - вопрос сохранен без ошибок
+     * 1 - вопрос не сохранен (повторяющийся)
+     * 2 - вопрос вызвал ошибку
+     */
+    public int saveQuestion(QuestionDTO questionDTO) {
         log.info("Попытка сохранить вопрос");
         Set<ConstraintViolation<QuestionDTO>> violations = validator.validate(questionDTO);
 
         if (!violations.isEmpty()) {
             log.error(violations.toString());
-            throw new ConstraintViolationException(violations);
+            return 2;
         }
 
         Question question = questionMapper.questionFromQuestionDTO(questionDTO);
 
         if (isExistQuestion(question)) {
             log.error(questionIsExistError);
-            throw new QuestionIsExistException(questionIsExistError);
+            return 1;
         }
 
         long countOfRightAnswers = questionDTO.getAnswers().stream()
@@ -80,12 +96,23 @@ public class QuestionServiceImpl implements QuestionService {
 
         if (countOfRightAnswers != 1 || questionDTO.getAnswers().size() < 2) {
             log.error(correctOrSizeError);
-            throw new QuestionCreationException(correctOrSizeError);
+            return 2;
         }
 
         question.setAnswers(answerMapper.listAnswersFromListAnswersDTO(questionDTO.getAnswers()));
         Question savedQuestion = questionRepository.save(question);
-        log.info("Вопрос с id: {} сохранен", savedQuestion);
+        log.info("Вопрос с id: {} сохранен", savedQuestion.getId());
+        return 0;
+    }
+
+    @Override
+    public QuestionResponse saveListQuestions(ArrayList<QuestionDTO> questionDTOList) {
+        QuestionResponse questionResponse = new QuestionResponse();
+        questionDTOList.forEach(questionDTO -> {
+            int statusCode = saveQuestion(questionDTO);
+            questionResponse.incrementByStatusCode(statusCode);
+        });
+        return questionResponse;
     }
 
     @Override
