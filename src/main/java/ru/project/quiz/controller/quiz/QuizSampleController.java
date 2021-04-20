@@ -36,7 +36,7 @@ public class QuizSampleController {
     @DeleteMapping
     public ResponseEntity<Response> deleteQuestion(@RequestParam long id) {
         quizSampleService.deleteSample(id);
-        return new ResponseEntity<>(new Response("QuizSample has been deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(new Response("QuizSample has been deleted"), HttpStatus.NO_CONTENT);
     }
 
     public QuizSampleController(QuizSampleService quizSampleService) {

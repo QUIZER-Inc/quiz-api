@@ -39,20 +39,29 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Role findRole(String name) {
+        Optional<Role> optRole = roleRepository.findByName(name);
+        if (optRole.isEmpty()) {
+            throw new RuntimeException("Роль не существует");
+        }
+       return optRole.get();
+    }
+
+    @Override
     public void deleteRole(String name) {
-       Optional<Role> optRole = roleRepository.findByName(name);
-       if (optRole.isEmpty()){
-           throw new RuntimeException("Роль не существует");
-       }
-       Role role = optRole.get();
-       roleRepository.delete(role);
+        Optional<Role> optRole = roleRepository.findByName(name);
+        if (optRole.isEmpty()) {
+            throw new RuntimeException("Роль не существует");
+        }
+        Role role = optRole.get();
+        roleRepository.delete(role);
     }
 
     @Override
     public List<ITUserDTO> findUsersByRole(String name) {
         List<ITUser> list = userRepository.findITUsersByRoleName(name);
         List<ITUserDTO> listDTO = userMapper.listITUsersDTOFromListITUsers(list);
-        if (list.isEmpty()){
+        if (list.isEmpty()) {
             throw new RuntimeException("Юзеры с данной ролью не найдены");
         }
         return listDTO;

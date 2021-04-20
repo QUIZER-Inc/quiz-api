@@ -28,7 +28,6 @@ public class QuizController {
 
     @Operation(summary = "Завершение квиза(теста)", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<QuizDTO> finishQuiz(@RequestBody QuizDTO quizDTO) {
         return new ResponseEntity<>(quizService.finishQuiz(quizDTO), HttpStatus.OK);
     }

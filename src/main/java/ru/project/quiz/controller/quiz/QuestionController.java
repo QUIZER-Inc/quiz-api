@@ -48,7 +48,7 @@ public class QuestionController {
     @DeleteMapping
     public ResponseEntity<Response> deleteQuestion(@RequestParam(name = "questionId") long id) {
         questionService.deleteQuestion(id);
-        return new ResponseEntity<>(new Response("Question has been deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(new Response("Question has been deleted"), HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Редактирование вопроса", security = @SecurityRequirement(name = "bearerAuth"))

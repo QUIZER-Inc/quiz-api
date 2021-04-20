@@ -3,7 +3,6 @@ package ru.project.quiz.domain.entity.quiz;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.project.quiz.domain.entity.BaseEntity;
-import ru.project.quiz.domain.enums.ituser.PermissionType;
 import ru.project.quiz.domain.enums.question.CategoryType;
 import ru.project.quiz.domain.enums.question.DifficultyType;
 

@@ -21,6 +21,7 @@ import ru.project.quiz.service.mail.MailService;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     }
 
     @Override
-    public void editUser(ITUser user) {
+    public ITUser editUser(ITUser user) throws UserPrincipalNotFoundException {
         Optional<ITUser> optUser = userRepository.findById(user.getId());
         if (optUser.isPresent()){
             if (bCryptPasswordEncoder.matches(user.getPassword(), optUser.get().getPassword())){
@@ -71,8 +72,9 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
             } else {
                 user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             }
-            userRepository.save(user);
+          return userRepository.save(user);
         }
+        else throw new UserPrincipalNotFoundException("User "+user.getUsername()+" not found");
     }
 
     @Override

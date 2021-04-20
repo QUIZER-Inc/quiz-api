@@ -11,6 +11,8 @@ import ru.project.quiz.domain.entity.ituser.ITUser;
 import ru.project.quiz.handler.response.Response;
 import ru.project.quiz.service.ituser.ITUserService;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Контроллер пользователей")
@@ -24,14 +26,13 @@ public class UserController {
 
     @Operation(summary = "Поиск пользователя с данным username", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/{name}")
-    public ITUserDTO findUserByName(@PathVariable String name) {
-        return userService.findUserByUsername(name);
+    public ResponseEntity<ITUserDTO> findUserByName(@PathVariable String name) {
+        return new ResponseEntity<>(userService.findUserByUsername(name),HttpStatus.OK);
     }
 
     @Operation(summary = "Редактирование пользователя по username", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping
-    public ResponseEntity<Response> editUserByName(@RequestBody ITUser user) {
-        userService.editUser(user);
-        return new ResponseEntity<>(new Response("User has been edited"), HttpStatus.OK);
+    public ResponseEntity<ITUser> editUserByName(@RequestBody ITUser user) throws UserPrincipalNotFoundException {
+        return new ResponseEntity<>(userService.editUser(user), HttpStatus.OK);
     }
 }
