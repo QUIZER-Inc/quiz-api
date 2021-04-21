@@ -3,10 +3,13 @@ package ru.project.quiz.jwt.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import ru.project.quiz.domain.dto.ituser.ITUserDTO;
+import ru.project.quiz.domain.entity.ituser.ITUser;
+import ru.project.quiz.mapper.ituser.UserMapper;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -15,12 +18,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenUtil {
 
-    private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    private static final int JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
     @Value("${jwt.secret}")
     private String secret;
+
+    private final UserMapper userMapper;
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -50,13 +56,13 @@ public class JwtTokenUtil {
     }
 
     private String doGenerateToken(Map<String, Object> tokenData, UserDetails userDetails) {
-        ITUserDTO itUserDto = (ITUserDTO) userDetails;
-        tokenData.put("roles", itUserDto.getRoles());
+        ITUser itUser = (ITUser) userDetails;
+        tokenData.put("roles", userMapper.userDTOFromUser(itUser).getRoles());
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, 120);
+        calendar.add(Calendar.MINUTE, JWT_TOKEN_VALIDITY);
         return Jwts.builder()
                 .setClaims(tokenData)
-                .setSubject(itUserDto.getUsername())
+                .setSubject(itUser.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(calendar.getTime())
                 .signWith(SignatureAlgorithm.HS512, secret)
