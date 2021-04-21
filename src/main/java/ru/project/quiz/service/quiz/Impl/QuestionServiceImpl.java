@@ -10,9 +10,7 @@ import ru.project.quiz.domain.dto.quiz.AnswerDTO;
 import ru.project.quiz.domain.dto.quiz.QuestionDTO;
 import ru.project.quiz.domain.dto.response.QuestionResponse;
 import ru.project.quiz.domain.entity.quiz.Question;
-import ru.project.quiz.handler.exception.QuestionCreationException;
-import ru.project.quiz.handler.exception.QuestionIsExistException;
-import ru.project.quiz.handler.exception.QuestionNotFoundException;
+import ru.project.quiz.handler.exception.QuizAPPException;
 import ru.project.quiz.mapper.quiz.AnswerMapper;
 import ru.project.quiz.mapper.quiz.QuestionMapper;
 import ru.project.quiz.repository.quiz.AnswerRepository;
@@ -20,12 +18,10 @@ import ru.project.quiz.repository.quiz.QuestionRepository;
 import ru.project.quiz.service.quiz.QuestionService;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -49,13 +45,13 @@ public class QuestionServiceImpl implements QuestionService {
 
     public QuestionDTO getRandomQuestion() {
         Question question = questionRepository.getRandomQuestion()
-                .orElseThrow(() -> new QuestionNotFoundException("Question list is empty"));
+                .orElseThrow(() -> new QuizAPPException("Question list is empty"));
         return questionMapper.questionDTOFromQuestion(question);
     }
 
     public Set<QuestionDTO> getQuestionByCategoryName(String categoryName) {
         Question question = questionRepository.getRandomQuestion()
-                .orElseThrow(() -> new QuestionNotFoundException("Question list is empty"));
+                .orElseThrow(() -> new QuizAPPException("Question list is empty"));
         Set<Question> questions = questionRepository.getQuestionsByCategoryName(categoryName);
         Set<QuestionDTO> questionDTOS = new HashSet<>();
         questions.forEach(question1 -> questionDTOS.add(questionMapper.questionDTOFromQuestion(question)));
@@ -118,7 +114,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void deleteQuestion(long id) {
         if (questionRepository.findById(id).isEmpty()) {
-            throw new QuestionNotFoundException("Question not found with id: " + id);
+            throw new QuizAPPException("Question not found with id: " + id);
         } else {
             questionRepository.deleteById(id);
         }
@@ -128,7 +124,7 @@ public class QuestionServiceImpl implements QuestionService {
     public void editQuestion(QuestionDTO questionDTO) {
         questionRepository.findById(questionDTO.getId())
                 .map(questionRepository::save)
-                .orElseThrow(() -> new QuestionNotFoundException("Question not found"));
+                .orElseThrow(() -> new QuizAPPException("Question not found"));
     }
 
     private boolean isExistQuestion(Question question) {
