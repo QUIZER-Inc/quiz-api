@@ -48,7 +48,7 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<ITUser> optionalUser = userRepository.findUserByUsername(username);
         if (optionalUser.isPresent()) {
-            return userMapper.userDTOFromUser(optionalUser.get());
+            return optionalUser.get();
         }
         throw new UsernameNotFoundException("User not found, sorry");
     }
@@ -56,7 +56,7 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     @Override
     public ITUserDTO findUserByUsername(String name) {
         Optional<ITUser> optUser = userRepository.findUserByUsername(name);
-        if(optUser.isEmpty()){
+        if (optUser.isEmpty()) {
             throw new QuizAPPException("Данный пользователь не найден!");
         }
         return userMapper.userDTOFromUser(optUser.get());
@@ -65,8 +65,8 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     @Override
     public void editUser(ITUser user) {
         Optional<ITUser> optUser = userRepository.findById(user.getId());
-        if (optUser.isPresent()){
-            if (bCryptPasswordEncoder.matches(user.getPassword(), optUser.get().getPassword())){
+        if (optUser.isPresent()) {
+            if (bCryptPasswordEncoder.matches(user.getPassword(), optUser.get().getPassword())) {
                 user.setPassword(optUser.get().getPassword());
             } else {
                 user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
