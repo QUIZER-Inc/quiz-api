@@ -9,9 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.project.quiz.domain.dto.ituser.ITUserDTO;
 import ru.project.quiz.domain.dto.ituser.RoleDTO;
+import ru.project.quiz.domain.entity.ituser.ITUser;
 import ru.project.quiz.domain.entity.ituser.Role;
 import ru.project.quiz.domain.enums.ituser.PermissionType;
 import ru.project.quiz.mapper.ituser.RoleMapper;
+import ru.project.quiz.service.ituser.ITUserService;
 import ru.project.quiz.service.ituser.RoleService;
 
 import java.util.List;
@@ -25,6 +27,8 @@ import java.util.Optional;
 public class RoleController {
     private final RoleService roleService;
     private final RoleMapper roleMapper;
+    private final ITUserService userService;
+
 
     @Operation(summary = "Создать новую роль", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
@@ -41,8 +45,8 @@ public class RoleController {
     //TODO ISSUE#36
     @Operation(summary = "Лист пользователей с данной ролью", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/list/{roleName}")
-    public List<ITUserDTO> findUsersByRole(@PathVariable String roleName) {
-        return roleService.findUsersByRole(roleName);
+    public List<ITUser> findUsersByRole(@PathVariable String roleName) {
+        return userService.findUsersByRole(roleName);
     }
 
     @Operation(summary = "Получить роль по ID", security = @SecurityRequirement(name = "bearerAuth"))

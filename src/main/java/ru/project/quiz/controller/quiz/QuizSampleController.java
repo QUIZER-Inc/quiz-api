@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.project.quiz.domain.dto.quiz.QuizSampleDTO;
+import ru.project.quiz.domain.entity.quiz.QuizSample;
 import ru.project.quiz.handler.response.Response;
 import ru.project.quiz.service.quiz.QuizSampleService;
 
@@ -20,15 +20,15 @@ public class QuizSampleController {
 
     @Operation(summary = "Добавление сэмпла", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
-    public ResponseEntity<Response> addSample(@Valid @RequestBody QuizSampleDTO quizSampleDTO) {
-        quizSampleService.saveSample(quizSampleDTO);
+    public ResponseEntity<Response> addSample(@Valid @RequestBody QuizSample quizSample) {
+        quizSampleService.saveSample(quizSample);
         return new ResponseEntity<>(new Response("Сэмпл добавлен"), HttpStatus.OK);
     }
 
     @Operation(summary = "Редактирование сэмпла", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping
-    public ResponseEntity<Response> editQuestion(@Valid @RequestBody QuizSampleDTO quizSampleDTO, @RequestParam long id) {
-        quizSampleService.editSample(quizSampleDTO, id);
+    public ResponseEntity<Response> editQuestion(@Valid @RequestBody QuizSample quizSample, @RequestParam long id) {
+        quizSampleService.editSample(quizSample, id);
         return new ResponseEntity<>(new Response("QuizSample has been edited"), HttpStatus.OK);
     }
 

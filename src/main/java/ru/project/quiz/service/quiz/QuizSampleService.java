@@ -1,11 +1,11 @@
 package ru.project.quiz.service.quiz;
 
-import ru.project.quiz.domain.dto.quiz.QuizSampleDTO;
+import ru.project.quiz.domain.entity.quiz.QuizSample;
 
 public interface QuizSampleService {
-    void saveSample(QuizSampleDTO quizSampleDTO);
+    QuizSample saveSample(QuizSample quizSample);
 
-    void editSample(QuizSampleDTO quizSampleDTO, long id);
+    QuizSample editSample(QuizSample quizSample, long id);
 
     void deleteSample(long id);
 }
