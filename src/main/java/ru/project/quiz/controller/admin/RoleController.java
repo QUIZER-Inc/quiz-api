@@ -12,6 +12,7 @@ import ru.project.quiz.domain.dto.ituser.RoleDTO;
 import ru.project.quiz.domain.entity.ituser.Role;
 import ru.project.quiz.domain.enums.ituser.PermissionType;
 import ru.project.quiz.mapper.ituser.RoleMapper;
+import ru.project.quiz.service.ituser.ITUserService;
 import ru.project.quiz.service.ituser.RoleService;
 
 import java.util.List;
@@ -25,6 +26,11 @@ import java.util.Optional;
 public class RoleController {
     private final RoleService roleService;
     private final RoleMapper roleMapper;
+    public final ITUserService userService;
+
+    public final String SET_ROLE = "/give-role";
+    public final String LIST_USERS = "/list/{roleName}";
+    public final String ROLE_BY_ID = "/{role-name}";
 
     @Operation(summary = "Создать новую роль", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
@@ -40,13 +46,13 @@ public class RoleController {
 
     //TODO ISSUE#36
     @Operation(summary = "Лист пользователей с данной ролью", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/list/{roleName}")
+    @GetMapping(LIST_USERS)
     public List<ITUserDTO> findUsersByRole(@PathVariable String roleName) {
         return roleService.findUsersByRole(roleName);
     }
 
-    @Operation(summary = "Получить роль по ID", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/{role-name}")
+    @Operation(summary = "Получить роль по имени роли", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(ROLE_BY_ID)
     public ResponseEntity<RoleDTO> findRoleByID(@PathVariable("role-name") String name) {
         Optional<Role> optRoleById = roleService.findRoleByName(name);
         return optRoleById
@@ -54,4 +60,9 @@ public class RoleController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
+    @Operation(summary = "Дать роль пользователю", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(SET_ROLE)
+    public void setNewRole(@RequestParam String username, @RequestParam String roleName) {
+        userService.setNewRole(username, roleName);
+    }
 }
