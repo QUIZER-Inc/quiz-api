@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.project.quiz.domain.dto.ituser.ITUserDTO;
 import ru.project.quiz.domain.dto.ituser.RoleDTO;
 import ru.project.quiz.domain.entity.ituser.Role;
-import ru.project.quiz.domain.enums.ituser.PermissionType;
 import ru.project.quiz.mapper.ituser.RoleMapper;
 import ru.project.quiz.mapper.ituser.UserMapper;
 import ru.project.quiz.service.ituser.ITUserService;
@@ -35,8 +34,9 @@ public class RoleController {
 
     @Operation(summary = "Создать новую роль", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
-    public void addNewRole(@RequestParam String name, @RequestParam PermissionType permissionType) {
-        roleService.addNewRole(name, permissionType);
+    public void addNewRole(@RequestBody RoleDTO roleDTO) {
+        Role role = roleMapper.roleFromRoleDTO(roleDTO);
+        roleService.addNewRole(role);
     }
 
     @Operation(summary = "Удалить роль", security = @SecurityRequirement(name = "bearerAuth"))

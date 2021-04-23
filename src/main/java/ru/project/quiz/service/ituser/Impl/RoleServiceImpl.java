@@ -1,5 +1,6 @@
 package ru.project.quiz.service.ituser.Impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.project.quiz.domain.entity.ituser.Role;
 import ru.project.quiz.domain.enums.ituser.PermissionType;
@@ -12,21 +13,13 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
 
-    public RoleServiceImpl(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
     @Override
-    public Role addNewRole(String name, PermissionType permissionType) {
-        Role role = new Role();
-        role.setName(name);
-        Set<PermissionType> set = new HashSet<>();
-        set.add(permissionType);
-        role.setPermissions(set);
+    public Role addNewRole(Role role) {
         return roleRepository.save(role);
     }
 

@@ -6,7 +6,7 @@ import ru.project.quiz.domain.enums.ituser.PermissionType;
 import java.util.Optional;
 
 public interface RoleService {
-    Role addNewRole(String name, PermissionType permissionType);
+    Role addNewRole(Role role);
 
     void deleteRole(String name);
 
