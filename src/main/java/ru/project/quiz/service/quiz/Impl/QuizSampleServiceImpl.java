@@ -3,10 +3,8 @@ package ru.project.quiz.service.quiz.Impl;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
-import ru.project.quiz.domain.dto.quiz.QuizSampleDTO;
 import ru.project.quiz.domain.entity.quiz.QuizSample;
 import ru.project.quiz.handler.exception.QuizAPPException;
-import ru.project.quiz.mapper.quiz.QuizSampleMapper;
 import ru.project.quiz.repository.quiz.QuizSampleRepository;
 import ru.project.quiz.service.quiz.QuizSampleService;
 
@@ -14,27 +12,26 @@ import ru.project.quiz.service.quiz.QuizSampleService;
 public class QuizSampleServiceImpl implements QuizSampleService {
 
     public final QuizSampleRepository quizSampleRepository;
-    public final QuizSampleMapper quizSampleMapper;
 
-    public QuizSampleServiceImpl(QuizSampleRepository quizSampleRepository, QuizSampleMapper quizSampleMapper) {
+    public QuizSampleServiceImpl(QuizSampleRepository quizSampleRepository) {
         this.quizSampleRepository = quizSampleRepository;
-        this.quizSampleMapper = quizSampleMapper;
     }
 
     @Override
-    public void saveSample(QuizSampleDTO quizSampleDTO) {
-        QuizSample quizSample = quizSampleMapper.quizSampleFromQuizSampleDto(quizSampleDTO);
-        if(isExistSample(quizSample)){
+    public QuizSample saveSample(QuizSample quizSample) {
+        if (isExistSample(quizSample)) {
             throw new QuizAPPException("Сэмпл Существует");
         }
         quizSampleRepository.save(quizSample);
+        return quizSample;
     }
 
     @Override
-    public void editSample(QuizSampleDTO quizSampleDTO, long id) {
+    public QuizSample editSample(QuizSample quizSample, long id) {
         quizSampleRepository.findById(id)
                 .map(quizSampleRepository::save)
                 .orElseThrow(() -> new QuizAPPException("Sample not found"));
+        return quizSample;
     }
 
     @Override
@@ -46,8 +43,8 @@ public class QuizSampleServiceImpl implements QuizSampleService {
         }
     }
 
-    private boolean isExistSample(QuizSample quizSample) {
-        Example<QuizSample> example = Example.of(quizSample, modelToCheckExistQuestion());
+    private boolean isExistSample(ru.project.quiz.domain.entity.quiz.QuizSample quizSample) {
+        Example<ru.project.quiz.domain.entity.quiz.QuizSample> example = Example.of(quizSample, modelToCheckExistQuestion());
         return quizSampleRepository.exists(example);
     }
 

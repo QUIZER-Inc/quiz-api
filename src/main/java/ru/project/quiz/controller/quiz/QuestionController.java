@@ -8,11 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.project.quiz.domain.dto.quiz.QuestionDTO;
 import ru.project.quiz.domain.dto.response.QuestionResponse;
+import ru.project.quiz.domain.entity.quiz.Question;
 import ru.project.quiz.handler.response.Response;
 import ru.project.quiz.service.quiz.QuestionService;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -26,21 +28,21 @@ public class QuestionController {
 
     @Operation(summary = "Получение рандом вопроса", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(RANDOM_QUESTION)
-    public ResponseEntity<QuestionDTO> getQuestion() {
-        QuestionDTO questionDTO = questionService.getRandomQuestion();
-        return new ResponseEntity<>(questionDTO, HttpStatus.OK);
+    public ResponseEntity<Question> getQuestion() {
+        Question question = questionService.getRandomQuestion();
+        return new ResponseEntity<>(question, HttpStatus.OK);
     }
 
     @Operation(summary = "Получение вопросов по категории", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping
-    public ResponseEntity<Set<QuestionDTO>> getQuestionByCategory(@RequestParam(name = "category") String category) {
+    public ResponseEntity<List<Question>> getQuestionByCategory(@RequestParam(name = "category") String category) {
         return new ResponseEntity<>(questionService.getQuestionByCategoryName(category), HttpStatus.OK);
     }
 
     @Operation(summary = "Добавление списка вопросов", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
-    public ResponseEntity<QuestionResponse> addListQuestion(@RequestBody ArrayList<QuestionDTO> questionDTOList) {
-        QuestionResponse questionResponse = questionService.saveListQuestions(questionDTOList);
+    public ResponseEntity<QuestionResponse> addListQuestion(@RequestBody ArrayList<Question> questionList) {
+        QuestionResponse questionResponse = questionService.saveListQuestions(questionList);
         return new ResponseEntity<>(questionResponse, HttpStatus.OK);
     }
 
@@ -53,8 +55,8 @@ public class QuestionController {
 
     @Operation(summary = "Редактирование вопроса", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping
-    public ResponseEntity<Response> editQuestion(@Valid @RequestBody QuestionDTO questionDTO) {
-        questionService.editQuestion(questionDTO);
+    public ResponseEntity<Response> editQuestion(@Valid @RequestBody Question question) {
+        questionService.editQuestion(question);
         return new ResponseEntity<>(new Response("Question has been edited"), HttpStatus.OK);
     }
 
