@@ -11,7 +11,7 @@ import ru.project.quiz.domain.dto.ituser.ITUserDTO;
 import ru.project.quiz.domain.entity.ituser.ITUser;
 import ru.project.quiz.domain.entity.ituser.Role;
 import ru.project.quiz.domain.enums.ituser.PermissionType;
-import ru.project.quiz.handler.exception.IncorrectInputUserException;
+import ru.project.quiz.handler.exception.QuizAPPException;
 import ru.project.quiz.mapper.ituser.UserMapper;
 import ru.project.quiz.repository.ituser.RoleRepository;
 import ru.project.quiz.repository.ituser.UserRepository;
@@ -21,7 +21,6 @@ import ru.project.quiz.service.mail.MailService;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -49,16 +48,16 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<ITUser> optionalUser = userRepository.findUserByUsername(username);
         if (optionalUser.isPresent()) {
-            return userMapper.userDTOFromUser(optionalUser.get());
+            return optionalUser.get();
         }
         throw new UsernameNotFoundException("User not found, sorry");
     }
 
     @Override
-    public ITUserDTO findUserByUsername(String name) { //TODO change to ITUser
+    public ITUserDTO findUserByUsername(String name) {
         Optional<ITUser> optUser = userRepository.findUserByUsername(name);
         if (optUser.isEmpty()) {
-            throw new RuntimeException("Данный пользователь не найден!");
+            throw new QuizAPPException("Данный пользователь не найден!");
         }
         return userMapper.userDTOFromUser(optUser.get());
     }
@@ -74,7 +73,6 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
             }
             return userRepository.save(user);
         }
-        return user;
     }
 
     @Override
@@ -85,11 +83,11 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
         }
         Optional<ITUser> optionalUser = userRepository.findUserByUsername(itUserDTO.getUsername());
         if (optionalUser.isPresent()) {
-            throw new IncorrectInputUserException("Данный пользователь существует");
+            throw new QuizAPPException("Данный пользователь существует");
         } else {
             String email = itUserDTO.getEmail();
             if (userRepository.existsByEmail(email)) {
-                throw new IncorrectInputUserException("Пользователь с данной почтой уже существует");
+                throw new QuizAPPException("Пользователь с данной почтой уже существует");
             }
             ITUser user = new ITUser();
             user.setUsername(itUserDTO.getUsername());
@@ -104,19 +102,20 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
         }
     }
 
+
     @Override
     public ITUser setNewRole(String username, String roleName) {
         Optional<ITUser> optionalITUser = userRepository.findUserByUsername(username);
         if (optionalITUser.isEmpty()) {
             log.error("Пользователя с username: {} не существует", username);
-            throw new IncorrectInputUserException("Данный пользователь не существует");
+            throw new QuizAPPException("Данный пользователь не существует");
         } else {
             ITUser user = optionalITUser.get();
             //TODO поиск роли по имени
             Optional<Role> roleOptional = roleRepository.findByName(roleName);
             if (roleOptional.isEmpty()) {
                 log.error("Роли {} не существует", roleName);
-                throw new RuntimeException("Такой роли не существует");
+                throw new QuizAPPException("Такой роли не существует");
             }
             user.getRoles().add(roleOptional.get());
             return userRepository.save(user);

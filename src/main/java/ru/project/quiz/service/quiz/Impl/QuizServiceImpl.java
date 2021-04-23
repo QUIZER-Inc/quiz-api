@@ -60,7 +60,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public QuizDTO createQuiz(int numberOfQuestions, String quizName) {
         if (numberOfQuestions < 1) {
-            throw new BadNumberOfQuestionsException(badNumberOfQuestions);
+            throw new QuizAPPException(badNumberOfQuestions);
         }
         log.info("Начат процесс генерации вопроса");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -68,7 +68,7 @@ public class QuizServiceImpl implements QuizService {
         Optional<ITUser> user = userRepository.findUserByUsername(requestUser.getUsername());
         if (user.isEmpty()) {
             log.error(userWhoTriedCreateQuestionIsNotExist);
-            throw new IncorrectInputUserException(userWhoTriedCreateQuestionIsNotExist);
+            throw new QuizAPPException(userWhoTriedCreateQuestionIsNotExist);
         }
         String userUsername = user.get().getUsername();
         log.info("Попытка начать генерацию теста от {} успешна", userUsername);
@@ -79,7 +79,7 @@ public class QuizServiceImpl implements QuizService {
         Optional<QuizSample> quizSampleOptional = quizSampleRepository.findByName(quizName);
         if (quizSampleOptional.isEmpty()) {
             log.error("Семпл не найден с именем:  {}", quizName);
-            throw new SampleNotFoundException("Семпл не найден");
+            throw new QuizAPPException("Семпл не найден");
         }
         QuizSample quizSample = quizSampleOptional.get();
 
@@ -90,7 +90,7 @@ public class QuizServiceImpl implements QuizService {
                         .collect(Collectors.toList()));
         if (listOfRandomQuestions.isEmpty()) {
             log.error(getRandomQuestionsError);
-            throw new QuestionNotFoundException(getRandomQuestionsError);
+            throw new QuizAPPException(getRandomQuestionsError);
         }
 
         List<QuestionQuiz> questionQuizList = listOfRandomQuestions.stream().map(question -> {
@@ -129,7 +129,7 @@ public class QuizServiceImpl implements QuizService {
                             .filter(AnswerDTO::isCorrectAnswer).findFirst();
                     if (answerDTO.isEmpty()) {
                         log.error("В вопросе {} нет правильного ответа.", questionQuizDTO);
-                        throw new QuestionNotFoundException("В вопросе " + questionQuizDTO + " нет правильного ответа.");
+                        throw new QuizAPPException("В вопросе " + questionQuizDTO + " нет правильного ответа.");
                     }
                     return answerDTO.get().getId() == questionQuizDTO.getUserChoice();
                 }
@@ -139,14 +139,14 @@ public class QuizServiceImpl implements QuizService {
         Long userIdByQuizID = quizRepository.getUserIdByQuizID(quizDTO.getId());
         if (userIdByQuizID == null) {
             log.error("У {} вопроса нет владельца", quizDTO);
-            throw new QuizNotFoundException("У данного вопроса нет владельца");
+            throw new QuizAPPException("У данного вопроса нет владельца");
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ITUserDTO requestUser = (ITUserDTO) authentication.getPrincipal();
         Optional<ITUser> itUser = userRepository.findUserByUsername(requestUser.getUsername());
         if (itUser.isEmpty()) {
             log.error("Пользователя, пытающегося завершить тест не существует");
-            throw new IncorrectInputUserException("Пользователя, пытающегося завершить тест не существует");
+            throw new QuizAPPException("Пользователя, пытающегося завершить тест не существует");
         }
         Quiz finishedQuiz = quizMapper.quizFromQuizDTO(quizDTO);
         finishedQuiz.setItUser(itUser.get());
