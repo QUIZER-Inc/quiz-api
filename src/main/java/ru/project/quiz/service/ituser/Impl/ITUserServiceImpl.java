@@ -55,7 +55,7 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     }
 
     @Override
-    public ITUserDTO findUserByUsername(String name) { //change to ITUser
+    public ITUserDTO findUserByUsername(String name) { //TODO change to ITUser
         Optional<ITUser> optUser = userRepository.findUserByUsername(name);
         if (optUser.isEmpty()) {
             throw new RuntimeException("Данный пользователь не найден!");

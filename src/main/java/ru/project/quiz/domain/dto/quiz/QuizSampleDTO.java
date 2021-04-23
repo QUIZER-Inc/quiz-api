@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class QuizSample {
+public class QuizSampleDTO {
 
     long id;
 
