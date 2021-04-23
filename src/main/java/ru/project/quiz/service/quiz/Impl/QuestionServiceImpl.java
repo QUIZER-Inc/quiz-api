@@ -1,6 +1,5 @@
 package ru.project.quiz.service.quiz.Impl;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.project.quiz.domain.dto.response.QuestionResponse;
 import ru.project.quiz.domain.entity.quiz.Answer;
 import ru.project.quiz.domain.entity.quiz.Question;
-import ru.project.quiz.handler.exception.QuestionNotFoundException;
+import ru.project.quiz.handler.exception.QuizAPPException;
 import ru.project.quiz.repository.quiz.AnswerRepository;
 import ru.project.quiz.repository.quiz.QuestionRepository;
 import ru.project.quiz.service.quiz.QuestionService;
@@ -38,13 +37,12 @@ public class QuestionServiceImpl implements QuestionService {
 
     public Question getRandomQuestion() {
         return questionRepository.getRandomQuestion()
-                .orElseThrow(() -> new QuestionNotFoundException("Question list is empty"));
+                .orElseThrow(() -> new QuizAPPException("Question list is empty"));
     }
 
     public List<Question> getQuestionByCategoryName(String categoryName) {
         return questionRepository.getQuestionsByCategoryName(categoryName);
     }
-
 
     private final static String questionIsExistError = "Question is exist";
     private final static String correctOrSizeError = "Кол-во правильных ответов должно быть 1, а вопросов 2 и больше";
@@ -59,27 +57,22 @@ public class QuestionServiceImpl implements QuestionService {
     public int saveQuestion(Question question) {
         log.info("Попытка сохранить вопрос");
         Set<ConstraintViolation<Question>> violations = validator.validate(question);
-
         if (!violations.isEmpty()) {
             log.error(violations.toString());
             return 2;
         }
-
         if (isExistQuestion(question)) {
             log.error(questionIsExistError);
             return 1;
         }
-
         long countOfRightAnswers = question.getAnswers().stream()
                 .map(Answer::isCorrectAnswer)
                 .filter(correct -> correct)
                 .count();
-
         if (countOfRightAnswers != 1 || question.getAnswers().size() < 2) {
             log.error(correctOrSizeError);
             return 2;
         }
-
         question.setAnswers(question.getAnswers());
         Question savedQuestion = questionRepository.save(question);
         log.info("Вопрос с id: {} сохранен", savedQuestion.getId());
@@ -99,7 +92,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void deleteQuestion(long id) {
         if (questionRepository.findById(id).isEmpty()) {
-            throw new QuestionNotFoundException("Question not found with id: " + id);
+            throw new QuizAPPException("Question not found with id: " + id);
         } else {
             questionRepository.deleteById(id);
         }
@@ -109,7 +102,7 @@ public class QuestionServiceImpl implements QuestionService {
     public Question editQuestion(Question question) {
         questionRepository.findById(question.getId())
                 .map(questionRepository::save)
-                .orElseThrow(() -> new QuestionNotFoundException("Question not found"));
+                .orElseThrow(() -> new QuizAPPException("Question not found"));
         return question;
     }
 

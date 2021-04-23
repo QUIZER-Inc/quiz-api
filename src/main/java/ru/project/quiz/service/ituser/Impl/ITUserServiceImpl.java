@@ -21,6 +21,7 @@ import ru.project.quiz.service.mail.MailService;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -73,6 +74,7 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
             }
             return userRepository.save(user);
         }
+        return user;
     }
 
     @Override

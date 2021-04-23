@@ -4,8 +4,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import ru.project.quiz.domain.entity.quiz.QuizSample;
-import ru.project.quiz.handler.exception.SampleExistException;
-import ru.project.quiz.handler.exception.SampleNotFoundException;
+import ru.project.quiz.handler.exception.QuizAPPException;
 import ru.project.quiz.repository.quiz.QuizSampleRepository;
 import ru.project.quiz.service.quiz.QuizSampleService;
 
@@ -21,7 +20,7 @@ public class QuizSampleServiceImpl implements QuizSampleService {
     @Override
     public QuizSample saveSample(QuizSample quizSample) {
         if (isExistSample(quizSample)) {
-            throw new SampleExistException("Сэмпл Существует");
+            throw new QuizAPPException("Сэмпл Существует");
         }
         quizSampleRepository.save(quizSample);
         return quizSample;
@@ -31,14 +30,14 @@ public class QuizSampleServiceImpl implements QuizSampleService {
     public QuizSample editSample(QuizSample quizSample, long id) {
         quizSampleRepository.findById(id)
                 .map(quizSampleRepository::save)
-                .orElseThrow(() -> new SampleNotFoundException("Sample not found"));
+                .orElseThrow(() -> new QuizAPPException("Sample not found"));
         return quizSample;
     }
 
     @Override
     public void deleteSample(long id) {
         if (quizSampleRepository.findById(id).isEmpty()) {
-            throw new SampleNotFoundException("Sample not found with id: " + id);
+            throw new QuizAPPException("Sample not found with id: " + id);
         } else {
             quizSampleRepository.deleteById(id);
         }
