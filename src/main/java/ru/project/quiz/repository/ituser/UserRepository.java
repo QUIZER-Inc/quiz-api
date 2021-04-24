@@ -13,8 +13,6 @@ public interface UserRepository extends JpaRepository<ITUser, Long> {
 
     boolean existsByEmail(String email);
 
-    @Query(value = "SELECT * FROM users " +
-                    "JOIN users_roles ON users.id = users_roles.itusers_id" +
-                    " WHERE users_roles.roles_name = :role_name", nativeQuery = true)
+    @Query(value = "FROM ITUser user JOIN user.roles roles WHERE roles.name = :role_name")
     List<ITUser> findITUsersByRoleName(@Param("role_name")String name);
 }

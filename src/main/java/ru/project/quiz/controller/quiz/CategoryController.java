@@ -25,14 +25,14 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "Получение списка категорий", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        return new ResponseEntity<>(categoryService.getAllCategoriesDTO(), HttpStatus.OK);
+    public ResponseEntity<List<Category>> getAllCategories() {
+        return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
 
     @GetMapping("/{categoryName}")
     @Operation(summary = "Получение одной категории", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<CategoryDTO> getCategory(@PathVariable String categoryName) {
-        return new ResponseEntity<>(categoryService.getCategoryDTO(categoryName), HttpStatus.OK);
+    public ResponseEntity<Category> getCategory(@PathVariable String categoryName) {
+        return new ResponseEntity<>(categoryService.getCategory(categoryName), HttpStatus.OK);
     }
 
     @PostMapping

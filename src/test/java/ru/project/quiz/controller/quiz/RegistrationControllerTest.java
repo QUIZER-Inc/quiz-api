@@ -51,7 +51,7 @@ public class RegistrationControllerTest {
     @Disabled
     @BeforeEach
     public void setUp() {
-        itUserDTO = new ITUserDTO("test", "test", "email@test.ru", Collections.singleton(new RoleDTO("test", Collections.EMPTY_SET)));
+        itUserDTO = new ITUserDTO("test", "test", "email@test.ru");
     }
 
     @Disabled

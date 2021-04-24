@@ -1,5 +1,7 @@
 package ru.project.quiz.domain.entity.ituser;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import ru.project.quiz.domain.enums.ituser.PermissionType;
 
 import javax.persistence.*;
