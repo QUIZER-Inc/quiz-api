@@ -45,7 +45,6 @@ public class UserAdminConfig {
 
         final UserDetails userDetails = itUserService.loadUserByUsername("admin");
         final String token = jwtTokenUtil.generateToken(userDetails);
-        System.out.println("123");
         log.info("\n\n\nТОКЕН:\n{}\n\n\n", token);
     }
 }
