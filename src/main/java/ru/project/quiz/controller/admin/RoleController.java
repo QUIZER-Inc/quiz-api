@@ -10,14 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.project.quiz.domain.dto.ituser.ITUserDTO;
 import ru.project.quiz.domain.dto.ituser.RoleDTO;
 import ru.project.quiz.domain.entity.ituser.Role;
-import ru.project.quiz.domain.enums.ituser.PermissionType;
 import ru.project.quiz.mapper.ituser.RoleMapper;
+import ru.project.quiz.mapper.ituser.UserMapper;
 import ru.project.quiz.service.ituser.ITUserService;
 import ru.project.quiz.service.ituser.RoleService;
 
 import java.util.List;
 import java.util.Optional;
-
 
 @RestController
 @AllArgsConstructor
@@ -27,6 +26,7 @@ public class RoleController {
     private final RoleService roleService;
     private final RoleMapper roleMapper;
     public final ITUserService userService;
+    private final UserMapper userMapper;
 
     public final String SET_ROLE = "/give-role";
     public final String LIST_USERS = "/list/{roleName}";
@@ -34,8 +34,9 @@ public class RoleController {
 
     @Operation(summary = "Создать новую роль", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
-    public void addNewRole(@RequestParam String name, @RequestParam PermissionType permissionType) {
-        roleService.addNewRole(name, permissionType);
+    public void addNewRole(@RequestBody RoleDTO roleDTO) {
+        Role role = roleMapper.roleFromRoleDTO(roleDTO);
+        roleService.addNewRole(role);
     }
 
     @Operation(summary = "Удалить роль", security = @SecurityRequirement(name = "bearerAuth"))
@@ -48,7 +49,7 @@ public class RoleController {
     @Operation(summary = "Лист пользователей с данной ролью", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(LIST_USERS)
     public List<ITUserDTO> findUsersByRole(@PathVariable String roleName) {
-        return roleService.findUsersByRole(roleName);
+        return userMapper.listITUsersDTOFromListITUsers(userService.findUsersByRole(roleName));
     }
 
     @Operation(summary = "Получить роль по имени роли", security = @SecurityRequirement(name = "bearerAuth"))

@@ -21,6 +21,7 @@ import ru.project.quiz.service.mail.MailService;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     }
 
     @Override
-    public void editUser(ITUser user) {
+    public ITUser editUser(ITUser user) {
         Optional<ITUser> optUser = userRepository.findById(user.getId());
         if (optUser.isPresent()) {
             if (bCryptPasswordEncoder.matches(user.getPassword(), optUser.get().getPassword())) {
@@ -71,12 +72,13 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
             } else {
                 user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             }
-            userRepository.save(user);
+            return userRepository.save(user);
         }
+        return user;
     }
 
     @Override
-    public void saveUser(ITUserDTO itUserDTO) {
+    public ITUser saveUser(ITUserDTO itUserDTO) {
         Set<ConstraintViolation<ITUserDTO>> violations = validator.validate(itUserDTO);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
@@ -98,12 +100,13 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
             user.setRoles(Set.of(role));
             userRepository.save(user);
             mailService.registrationSuccessfulMessage(email);
+            return user;
         }
     }
 
 
     @Override
-    public void setNewRole(String username, String roleName) {
+    public ITUser setNewRole(String username, String roleName) {
         Optional<ITUser> optionalITUser = userRepository.findUserByUsername(username);
         if (optionalITUser.isEmpty()) {
             log.error("Пользователя с username: {} не существует", username);
@@ -117,7 +120,14 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
                 throw new QuizAPPException("Такой роли не существует");
             }
             user.getRoles().add(roleOptional.get());
-            userRepository.save(user);
+            return userRepository.save(user);
         }
+    }
+    public List<ITUser> findUsersByRole(String name) {
+        List<ITUser> list = userRepository.findITUsersByRoleName(name);
+        if (list.isEmpty()) {
+            throw new RuntimeException("Юзеры с данной ролью не найдены");
+        }
+        return list;
     }
 }

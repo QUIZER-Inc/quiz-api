@@ -2,20 +2,22 @@ package ru.project.quiz.service.quiz;
 
 import ru.project.quiz.domain.dto.quiz.QuestionDTO;
 import ru.project.quiz.domain.dto.response.QuestionResponse;
+import ru.project.quiz.domain.entity.quiz.Question;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public interface QuestionService {
-    QuestionDTO getRandomQuestion();
+    Question getRandomQuestion();
 
-    Set<QuestionDTO> getQuestionByCategoryName(String category);
+    List<Question> getQuestionByCategoryName(String category);
 
-    int saveQuestion(QuestionDTO questionDTO);
+    int saveQuestion(Question question); //TODO need refactor
 
-    QuestionResponse saveListQuestions(ArrayList<QuestionDTO> questionDTOList);
+    QuestionResponse saveListQuestions(ArrayList<Question> questionList);
 
     void deleteQuestion(long id);
 
-    void editQuestion(QuestionDTO questionDTO);
+    Question editQuestion(Question question);
 }
