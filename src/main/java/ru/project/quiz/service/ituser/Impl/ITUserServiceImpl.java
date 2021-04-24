@@ -1,5 +1,6 @@
 package ru.project.quiz.service.ituser.Impl;
 
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,24 +27,13 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor
 public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MailService mailService;
-    private final UserMapper userMapper;
     private final Validator validator;
-
-    Logger log = LoggerFactory.getLogger(ITUserServiceImpl.class);
-
-    public ITUserServiceImpl(RoleRepository roleRepository, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MailService mailService, UserMapper userMapper, Validator validator) {
-        this.roleRepository = roleRepository;
-        this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.mailService = mailService;
-        this.userMapper = userMapper;
-        this.validator = validator;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -55,12 +45,12 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     }
 
     @Override
-    public ITUserDTO findUserByUsername(String name) {
+    public ITUser findUserByUsername(String name) {
         Optional<ITUser> optUser = userRepository.findUserByUsername(name);
         if (optUser.isEmpty()) {
             throw new QuizAPPException("Данный пользователь не найден!");
         }
-        return userMapper.userDTOFromUser(optUser.get());
+        return optUser.get();
     }
 
     @Override
@@ -104,25 +94,6 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
         }
     }
 
-
-    @Override
-    public ITUser setNewRole(String username, String roleName) {
-        Optional<ITUser> optionalITUser = userRepository.findUserByUsername(username);
-        if (optionalITUser.isEmpty()) {
-            log.error("Пользователя с username: {} не существует", username);
-            throw new QuizAPPException("Данный пользователь не существует");
-        } else {
-            ITUser user = optionalITUser.get();
-            //TODO поиск роли по имени
-            Optional<Role> roleOptional = roleRepository.findByName(roleName);
-            if (roleOptional.isEmpty()) {
-                log.error("Роли {} не существует", roleName);
-                throw new QuizAPPException("Такой роли не существует");
-            }
-            user.getRoles().add(roleOptional.get());
-            return userRepository.save(user);
-        }
-    }
     public List<ITUser> findUsersByRole(String name) {
         List<ITUser> list = userRepository.findITUsersByRoleName(name);
         if (list.isEmpty()) {

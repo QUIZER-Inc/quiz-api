@@ -14,14 +14,14 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 public class ITUserDTO {
-    @Schema(description = "ID", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "ID")
     private long id;
 
     @NotBlank(message = "Имя пользователя не должно быть пустым")
     @Schema(description = "Имя пользователя")
     private String username;
 
-    @Schema(description = "Пароль", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Пароль")
     @NotBlank(message = "Пароль не должен быть пустым")
     private String password;
 
@@ -29,7 +29,7 @@ public class ITUserDTO {
     @NotBlank
     private String email;
 
-    @Schema(description = "roles", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "roles")
     private Set<RoleDTO> roles;
 
     public ITUserDTO(String username, String password, String email) {

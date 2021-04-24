@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class QuizServiceImpl implements QuizService {
+public class QuizServiceImpl implements QuizService { //TODO ISSUE#37
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
@@ -86,7 +86,7 @@ public class QuizServiceImpl implements QuizService {
         List<Question> listOfRandomQuestions = questionRepository.getListQuestionsBySampleName(
                 numberOfQuestions,
                 quizSample.getSubCategories().stream()
-                        .map(category -> category.name())
+                        .map(Enum::name)
                         .collect(Collectors.toList()));
         if (listOfRandomQuestions.isEmpty()) {
             log.error(getRandomQuestionsError);

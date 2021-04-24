@@ -7,4 +7,6 @@ import ru.project.quiz.domain.entity.quiz.QuizSample;
 @Mapper(componentModel = "spring")
 public interface QuizSampleMapper {
     QuizSample quizSampleFromQuizSampleDto(QuizSampleDTO quizSampleDTO);
+    QuizSampleDTO quizSampleDTOFromQuizSample(QuizSample quizSample);
+
 }

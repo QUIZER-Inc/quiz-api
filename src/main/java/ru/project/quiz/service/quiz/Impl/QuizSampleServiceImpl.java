@@ -18,6 +18,15 @@ public class QuizSampleServiceImpl implements QuizSampleService {
     }
 
     @Override
+    public QuizSample getSample(long id) {
+        if (quizSampleRepository.findById(id).isEmpty()) {
+            throw new QuizAPPException("Sample not found with id: " + id);
+        } else {
+            return quizSampleRepository.findById(id).get();
+        }
+    }
+
+    @Override
     public QuizSample saveSample(QuizSample quizSample) {
         if (isExistSample(quizSample)) {
             throw new QuizAPPException("Сэмпл Существует");
@@ -27,8 +36,8 @@ public class QuizSampleServiceImpl implements QuizSampleService {
     }
 
     @Override
-    public QuizSample editSample(QuizSample quizSample, long id) {
-        quizSampleRepository.findById(id)
+    public QuizSample editSample(QuizSample quizSample) {
+        quizSampleRepository.findById(quizSample.getId())
                 .map(quizSampleRepository::save)
                 .orElseThrow(() -> new QuizAPPException("Sample not found"));
         return quizSample;
