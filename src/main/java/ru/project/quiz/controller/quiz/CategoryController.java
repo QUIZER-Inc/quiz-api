@@ -45,7 +45,7 @@ public class CategoryController {
         Category category = categoryMapper.categoryFromCategoryDTO(categoryDTO);
         categoryService.addCategory(category);
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setLocation(URI.create("/api/categories/" + category.getId() + "/"));
+        responseHeaders.setLocation(URI.create("/api/categories/" + category.getId()));
         return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
     }
 
@@ -57,9 +57,9 @@ public class CategoryController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{categoryName}")
+    @DeleteMapping
     @Operation(summary = "Удаление одной категории", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<String> deleteCategory(@PathVariable String categoryName) {
+    public ResponseEntity<String> deleteCategory(@RequestParam String categoryName) {
         categoryService.deleteCategory(categoryName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

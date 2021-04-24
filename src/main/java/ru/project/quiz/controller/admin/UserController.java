@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.project.quiz.domain.dto.ituser.ITUserDTO;
-import ru.project.quiz.domain.entity.ituser.ITUser;
 import ru.project.quiz.mapper.ituser.UserMapper;
 import ru.project.quiz.service.ituser.ITUserService;
 
@@ -24,22 +23,16 @@ public class UserController {
     private final UserMapper userMapper;
 
     @Operation(summary = "Поиск пользователя с данным username", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/{name}")
-    public ResponseEntity<ITUserDTO> findUserByName(@PathVariable String name) {
-        return new ResponseEntity<>(userService.findUserByUsername(name), HttpStatus.OK);
+    @GetMapping("/{username}")
+    public ResponseEntity<ITUserDTO> findUserByName(@PathVariable String username) {
+        System.out.println(username);
+        return new ResponseEntity<>(userMapper.userDTOFromUser(userService.findUserByUsername(username)), HttpStatus.OK);
     }
 
-    @Operation(summary = "Редактирование пользователя по username", security = @SecurityRequirement(name = "bearerAuth"))
-    @PatchMapping
-    public ResponseEntity<ITUserDTO> editUserByName(@RequestBody ITUser user) {
-        return new ResponseEntity<>(userMapper.userDTOFromUser(userService.editUser(user)), HttpStatus.OK);
-    }
-
-    //TODO ISSUE#36
-    @Operation(summary = "Дать роль пользователю", security = @SecurityRequirement(name = "bearerAuth"))
-    @PatchMapping("/{username}")
-    public ResponseEntity<ITUserDTO> setRoleToUser(@PathVariable String username, @RequestParam String roleName) {
-        return new ResponseEntity<>(userMapper.userDTOFromUser(userService.setNewRole(username, roleName)), HttpStatus.OK);
+    @Operation(summary = "Редактирование пользователя", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping
+    public ResponseEntity<ITUserDTO> editUserByName(@RequestBody ITUserDTO user) {
+        return new ResponseEntity<>(userMapper.userDTOFromUser(userService.editUser(userMapper.userFromUserDTO(user))), HttpStatus.OK);
     }
 
     @Operation(summary = "Лист пользователей с данной ролью", security = @SecurityRequirement(name = "bearerAuth"))

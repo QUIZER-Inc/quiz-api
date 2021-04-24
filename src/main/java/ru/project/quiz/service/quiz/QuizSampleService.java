@@ -8,7 +8,7 @@ public interface QuizSampleService {
 
     QuizSample saveSample(QuizSample quizSample);
 
-    QuizSample editSample(QuizSample quizSample, long id);
+    QuizSample editSample(QuizSample quizSample);
 
     void deleteSample(long id);
 }

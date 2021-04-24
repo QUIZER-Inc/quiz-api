@@ -55,12 +55,12 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     }
 
     @Override
-    public ITUserDTO findUserByUsername(String name) {
+    public ITUser findUserByUsername(String name) {
         Optional<ITUser> optUser = userRepository.findUserByUsername(name);
         if (optUser.isEmpty()) {
             throw new QuizAPPException("Данный пользователь не найден!");
         }
-        return userMapper.userDTOFromUser(optUser.get());
+        return optUser.get();
     }
 
     @Override
@@ -104,25 +104,6 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
         }
     }
 
-
-    @Override
-    public ITUser setNewRole(String username, String roleName) {
-        Optional<ITUser> optionalITUser = userRepository.findUserByUsername(username);
-        if (optionalITUser.isEmpty()) {
-            log.error("Пользователя с username: {} не существует", username);
-            throw new QuizAPPException("Данный пользователь не существует");
-        } else {
-            ITUser user = optionalITUser.get();
-            //TODO поиск роли по имени
-            Optional<Role> roleOptional = roleRepository.findByName(roleName);
-            if (roleOptional.isEmpty()) {
-                log.error("Роли {} не существует", roleName);
-                throw new QuizAPPException("Такой роли не существует");
-            }
-            user.getRoles().add(roleOptional.get());
-            return userRepository.save(user);
-        }
-    }
     public List<ITUser> findUsersByRole(String name) {
         List<ITUser> list = userRepository.findITUsersByRoleName(name);
         if (list.isEmpty()) {

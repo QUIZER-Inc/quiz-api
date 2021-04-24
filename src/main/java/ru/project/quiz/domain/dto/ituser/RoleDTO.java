@@ -1,12 +1,15 @@
 package ru.project.quiz.domain.dto.ituser;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import ru.project.quiz.domain.enums.ituser.PermissionType;
 
 import java.util.Set;
 
 public class RoleDTO {
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private long id;
     private String name;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Set<PermissionType> permissions;
 
     public RoleDTO(String name, Set<PermissionType> permissions) {

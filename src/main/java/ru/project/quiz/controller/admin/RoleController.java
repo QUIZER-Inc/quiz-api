@@ -24,7 +24,7 @@ public class RoleController {
     private final RoleService roleService;
     private final RoleMapper roleMapper;
 
-    public final String ROLE_BY_ID = "/{role-name}";
+    public final String ROLE_BY_NAME = "/{role-name}";
 
     @Operation(summary = "Создать новую роль", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
@@ -44,7 +44,7 @@ public class RoleController {
     }
 
     @Operation(summary = "Получить роль по имени роли", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(ROLE_BY_ID)
+    @GetMapping(ROLE_BY_NAME)
     public ResponseEntity<RoleDTO> findRoleByID(@PathVariable("role-name") String name) {
         Optional<Role> optRoleById = roleService.findRoleByName(name);
         return optRoleById

@@ -36,8 +36,8 @@ public class QuizSampleServiceImpl implements QuizSampleService {
     }
 
     @Override
-    public QuizSample editSample(QuizSample quizSample, long id) {
-        quizSampleRepository.findById(id)
+    public QuizSample editSample(QuizSample quizSample) {
+        quizSampleRepository.findById(quizSample.getId())
                 .map(quizSampleRepository::save)
                 .orElseThrow(() -> new QuizAPPException("Sample not found"));
         return quizSample;

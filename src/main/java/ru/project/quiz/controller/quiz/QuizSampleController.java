@@ -44,8 +44,8 @@ public class QuizSampleController {
 
     @Operation(summary = "Редактирование сэмпла", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping
-    public ResponseEntity<String> editQuestion(@Valid @RequestBody QuizSampleDTO quizSampleDTO, @RequestParam long id) {
-        quizSampleService.editSample(quizSampleMapper.quizSampleFromQuizSampleDto(quizSampleDTO), id);
+    public ResponseEntity<String> editQuestion(@Valid @RequestBody QuizSampleDTO quizSampleDTO) {
+        quizSampleService.editSample(quizSampleMapper.quizSampleFromQuizSampleDto(quizSampleDTO));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

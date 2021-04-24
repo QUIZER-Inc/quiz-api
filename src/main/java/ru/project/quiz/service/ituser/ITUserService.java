@@ -9,11 +9,9 @@ import java.util.List;
 public interface ITUserService {
     ITUser saveUser(ITUserDTO ITUserDTO);
 
-    ITUser setNewRole(String username, String roleName);
-
     UserDetails loadUserByUsername(String username);
 
-    ITUserDTO findUserByUsername(String name);
+    ITUser findUserByUsername(String name);
 
     ITUser editUser(ITUser user);
 
