@@ -86,7 +86,7 @@ public class QuizServiceImpl implements QuizService { //TODO ISSUE#37
         List<Question> listOfRandomQuestions = questionRepository.getListQuestionsBySampleName(
                 numberOfQuestions,
                 quizSample.getSubCategories().stream()
-                        .map(category -> category.name())
+                        .map(Enum::name)
                         .collect(Collectors.toList()));
         if (listOfRandomQuestions.isEmpty()) {
             log.error(getRandomQuestionsError);

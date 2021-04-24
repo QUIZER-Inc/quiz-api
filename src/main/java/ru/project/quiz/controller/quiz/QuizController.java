@@ -26,9 +26,6 @@ public class QuizController {
     @Operation(summary = "Завершение квиза(теста)", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
     public ResponseEntity<QuizDTO> finishQuiz(@RequestBody QuizDTO quizDTO) {
-        // HttpHeaders responseHeaders = new HttpHeaders();
-        // responseHeaders.setLocation(URI.create("/api/quiz/" + quiz + "/"));
-        //  return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
         return new ResponseEntity<>(quizService.finishQuiz(quizDTO), HttpStatus.CREATED);
     }
 
