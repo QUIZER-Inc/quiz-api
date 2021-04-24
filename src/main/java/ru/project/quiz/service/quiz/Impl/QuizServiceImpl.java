@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class QuizServiceImpl implements QuizService {
+public class QuizServiceImpl implements QuizService { //TODO ISSUE#37
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
