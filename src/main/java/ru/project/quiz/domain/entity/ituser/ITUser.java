@@ -1,14 +1,21 @@
 package ru.project.quiz.domain.entity.ituser;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import ru.project.quiz.domain.entity.BaseEntity;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-public class ITUser extends BaseEntity {
+public class ITUser extends BaseEntity implements UserDetails {
 
     @Column(name = "username", unique = true)
     private String username;
@@ -19,7 +26,7 @@ public class ITUser extends BaseEntity {
     @Column(name = "email", unique = true)
     private String email;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     @JoinColumns({
             @JoinColumn(name = "roles_name", referencedColumnName = "name"),
             @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -62,8 +69,36 @@ public class ITUser extends BaseEntity {
         return username;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.getRoles().stream()
+                .flatMap(roleDTO -> roleDTO.getPermissions().stream())
+                .map(permissionType -> new SimpleGrantedAuthority(permissionType.name()))
+                .collect(Collectors.toSet());
     }
 
     public String getPassword() {

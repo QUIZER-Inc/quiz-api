@@ -1,5 +1,7 @@
 package ru.project.quiz.domain.entity.ituser;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import ru.project.quiz.domain.enums.ituser.PermissionType;
 
 import javax.persistence.*;
@@ -21,7 +23,7 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private Set<PermissionType> permissions;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "roles")
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER, mappedBy = "roles")
     private Set<ITUser> ITUsers;
 
     public Role(String name, Set<PermissionType> permissions, Set<ITUser> ITUsers) {

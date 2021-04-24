@@ -12,5 +12,5 @@ public interface UserMapper {
 
     ITUserDTO userDTOFromUser(ITUser user);
 
-    List<ITUserDTO> listITUsersDTOFromListITUsers (List<ITUser> list);
+    List<ITUserDTO> listITUsersDTOFromListITUsers(List<ITUser> list);
 }

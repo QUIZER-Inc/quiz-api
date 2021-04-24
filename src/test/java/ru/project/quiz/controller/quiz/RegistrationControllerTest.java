@@ -18,11 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.project.quiz.controller.auth.RegistrationController;
 import ru.project.quiz.domain.dto.ituser.ITUserDTO;
-import ru.project.quiz.domain.dto.ituser.RoleDTO;
 import ru.project.quiz.handler.response.Response;
+import ru.project.quiz.mapper.ituser.UserMapper;
 import ru.project.quiz.service.ituser.ITUserService;
-
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,17 +39,20 @@ public class RegistrationControllerTest {
     @Mock
     private ITUserService mockService;
 
+    @Mock
+    private UserMapper userMapper;
+
     @Autowired
     private MockMvc mockMvc;
 
-    private final RegistrationController registrationController = new RegistrationController(mockService);
+    private final RegistrationController registrationController = new RegistrationController(mockService, userMapper);
 
     private ITUserDTO itUserDTO;
 
     @Disabled
     @BeforeEach
     public void setUp() {
-        itUserDTO = new ITUserDTO("test", "test", "email@test.ru", Collections.singleton(new RoleDTO("test", Collections.EMPTY_SET)));
+        itUserDTO = new ITUserDTO("test", "test", "email@test.ru");
     }
 
     @Disabled

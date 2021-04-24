@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.project.quiz.handler.exception.*;
 import ru.project.quiz.handler.response.Response;
 
-import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,15 +15,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            SampleExistException.class,
-            SampleNotFoundException.class,
-            BadNumberOfQuestionsException.class,
-            QuestionIsExistException.class,
-            QuestionNotFoundException.class,
-            IncorrectInputUserException.class,
-            ConstraintViolationException.class,
-            QuestionCreationException.class,
-            QuizNotFoundException.class,
+            QuizAPPException.class,
             RuntimeException.class})
     public ResponseEntity<Response> handleException(RuntimeException e) {
         return new ResponseEntity<>(new Response(e.getMessage()), HttpStatus.BAD_REQUEST);

@@ -2,6 +2,7 @@ package ru.project.quiz.dao;
 
 import org.springframework.stereotype.Repository;
 import ru.project.quiz.domain.entity.quiz.Question;
+import ru.project.quiz.handler.exception.QuizAPPException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -30,7 +31,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom {
         List<Long> listOfQuestions = em.createQuery(query.select(root.get("id"))).getResultList();
 
         if (listOfQuestions.isEmpty()) {
-            throw new RuntimeException("Список вопросов пуст");
+            throw new QuizAPPException("Список вопросов пуст");
         }
 
         Collections.shuffle(listOfQuestions);

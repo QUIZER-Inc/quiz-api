@@ -18,6 +18,6 @@ public interface QuestionRepository extends JpaRepository<Question,Long>, Questi
     @Query(value = "SELECT * FROM Questions WHERE category_type IN (:category) ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
     List<Question> getListQuestionsBySampleName(@Param("limit") int limit,
                                                 @Param("category") List<String> category);
-    Set<Question> getQuestionsByCategoryName(String categoryName);
+    List<Question> getQuestionsByCategoryName(String categoryName);
 
 }

@@ -6,11 +6,9 @@ import ru.project.quiz.domain.entity.quiz.Category;
 import java.util.List;
 
 public interface CategoryService {
-    List<CategoryDTO> getAllCategoriesDTO();
+    List<Category> getAllCategories();
 
     Category getCategory(String category);
-
-    CategoryDTO getCategoryDTO(String category);
 
     Category addCategory(Category category);
 
