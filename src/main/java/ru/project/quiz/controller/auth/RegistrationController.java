@@ -3,6 +3,8 @@ package ru.project.quiz.controller.auth;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.project.quiz.domain.dto.ituser.ITUserDTO;
 import ru.project.quiz.domain.entity.ituser.ITUser;
-import ru.project.quiz.handler.response.Response;
 import ru.project.quiz.mapper.ituser.UserMapper;
 import ru.project.quiz.service.ituser.ITUserService;
 
