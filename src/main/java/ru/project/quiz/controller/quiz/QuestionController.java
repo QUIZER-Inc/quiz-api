@@ -31,9 +31,14 @@ public class QuestionController {
 
     @Operation(summary = "Получение рандом вопроса", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(RANDOM_QUESTION)
-    public ResponseEntity<QuestionDTO> getQuestion() {
-        Question question = questionService.getRandomQuestion();
-        return new ResponseEntity<>(questionMapper.questionDTOFromQuestion(question), HttpStatus.OK);
+    public ResponseEntity<QuestionDTO> getRandomQuestion() {
+        return new ResponseEntity<>(questionMapper.questionDTOFromQuestion(questionService.getRandomQuestion()), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Получение рандом вопроса", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/{id}")
+    public ResponseEntity<QuestionDTO> getQuestionById(@PathVariable long id) {
+        return new ResponseEntity<>(questionMapper.questionDTOFromQuestion(questionService.getQuestionById(id)), HttpStatus.OK);
     }
 
     @Operation(summary = "Получение вопросов по категории", security = @SecurityRequirement(name = "bearerAuth"))

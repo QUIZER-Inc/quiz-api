@@ -155,4 +155,13 @@ public class QuizServiceImpl implements QuizService { //TODO ISSUE#37
         log.info("Попытка успешна решенный вопрос с id: {} сохранен", finishedQuiz.getId());
         return quizDTO;
     }
+
+    @Override
+    public QuizDTO getQuizById(long id) {
+        Optional<Quiz> optionalQuiz = quizRepository.findById(id);
+        if(optionalQuiz.isEmpty()){
+            throw new QuizAPPException("Квиз с таким ID не существует");
+        }
+        return quizMapper.quizDTOFromQuiz(optionalQuiz.get());
+    }
 }

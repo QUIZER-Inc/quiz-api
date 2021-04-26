@@ -15,4 +15,6 @@ public interface CategoryService {
     Category editCategory(Category category);
 
     void deleteCategory(String category);
+
+    Category getById(long id);
 }

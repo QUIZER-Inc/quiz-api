@@ -38,8 +38,7 @@ public class QuizSampleController {
     @Operation(summary = "Получение сэмпла", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/{id}")
     public ResponseEntity<QuizSampleDTO> getSample(@PathVariable long id) {
-        QuizSample quizSample = quizSampleService.getSample(id);
-        return new ResponseEntity<>(quizSampleMapper.quizSampleDTOFromQuizSample(quizSample), HttpStatus.OK);
+        return new ResponseEntity<>(quizSampleMapper.quizSampleDTOFromQuizSample(quizSampleService.getSample(id)), HttpStatus.OK);
     }
 
     @Operation(summary = "Редактирование сэмпла", security = @SecurityRequirement(name = "bearerAuth"))

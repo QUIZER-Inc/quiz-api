@@ -33,10 +33,16 @@ public class CategoryController {
         return new ResponseEntity<>(categoryMapper.listCategoryDTOFromCategory(categoryService.getAllCategories()), HttpStatus.OK);
     }
 
-    @GetMapping("/{categoryName}")
+    @GetMapping("/name/{categoryName}")
     @Operation(summary = "Получение одной категории", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<CategoryDTO> getCategory(@PathVariable String categoryName) {
+    public ResponseEntity<CategoryDTO> getCategoryByName(@PathVariable String categoryName) {
         return new ResponseEntity<>(categoryMapper.categoryDTOFromCategory(categoryService.getCategory(categoryName)), HttpStatus.OK);
+    }
+
+    @GetMapping("/id/{id}")
+    @Operation(summary = "Получение одной категории", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable long id) {
+        return new ResponseEntity<>(categoryMapper.categoryDTOFromCategory(categoryService.getById(id)), HttpStatus.OK);
     }
 
     @PostMapping

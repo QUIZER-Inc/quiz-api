@@ -101,4 +101,13 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
         }
         return list;
     }
+
+    @Override
+    public ITUser findUserById(long id) {
+        Optional<ITUser> optionalITUser = userRepository.findById(id);
+        if(optionalITUser.isEmpty()){
+            throw new QuizAPPException("Юзер с данным ID не найден");
+        }
+        return optionalITUser.get();
+    }
 }

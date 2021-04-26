@@ -20,4 +20,6 @@ public interface QuestionService {
     void deleteQuestion(long id);
 
     Question editQuestion(Question question);
+
+    Question getQuestionById(long id);
 }
