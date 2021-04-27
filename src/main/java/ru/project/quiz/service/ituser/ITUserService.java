@@ -16,4 +16,6 @@ public interface ITUserService {
     ITUser editUser(ITUser user);
 
     List<ITUser> findUsersByRole(String name);
+
+    ITUser findUserById(long id);
 }

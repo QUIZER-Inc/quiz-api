@@ -23,10 +23,15 @@ public class UserController {
     private final UserMapper userMapper;
 
     @Operation(summary = "Поиск пользователя с данным username", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/{username}")
+    @GetMapping("/name/{username}")
     public ResponseEntity<ITUserDTO> findUserByName(@PathVariable String username) {
-        System.out.println(username);
         return new ResponseEntity<>(userMapper.userDTOFromUser(userService.findUserByUsername(username)), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Поиск пользователя с данным ID", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/id/{id}")
+    public ResponseEntity<ITUserDTO> findUserById(@PathVariable long id) {
+        return new ResponseEntity<>(userMapper.userDTOFromUser(userService.findUserById(id)), HttpStatus.OK);
     }
 
     @Operation(summary = "Редактирование пользователя", security = @SecurityRequirement(name = "bearerAuth"))

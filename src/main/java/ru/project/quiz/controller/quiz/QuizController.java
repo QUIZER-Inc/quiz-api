@@ -23,6 +23,12 @@ public class QuizController {
         return new ResponseEntity<>(quizDTO, HttpStatus.OK);
     }
 
+    @Operation(summary = "Получить квиз по ID", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/{id}")
+    public ResponseEntity<QuizDTO> getQuizById(@PathVariable long id) {
+        return new ResponseEntity<>(quizService.getQuizById(id), HttpStatus.OK);
+    }
+
     @Operation(summary = "Завершение квиза(теста)", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
     public ResponseEntity<QuizDTO> finishQuiz(@RequestBody QuizDTO quizDTO) {

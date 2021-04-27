@@ -17,6 +17,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -104,6 +105,15 @@ public class QuestionServiceImpl implements QuestionService {
                 .map(questionRepository::save)
                 .orElseThrow(() -> new QuizAPPException("Question not found"));
         return question;
+    }
+
+    @Override
+    public Question getQuestionById(long id) {
+        Optional<Question> optionalQuestion = questionRepository.findById(id);
+        if(optionalQuestion.isEmpty()){
+            throw new QuizAPPException("Вопроса с данным ID не существует");
+        }
+        return optionalQuestion.get();
     }
 
     private boolean isExistQuestion(Question question) {
