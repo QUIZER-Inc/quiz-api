@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.project.quiz.domain.entity.ituser.ITUser;
 import ru.project.quiz.mapper.ituser.UserMapper;
 import ru.project.quiz.service.ituser.ITUserService;
 
@@ -27,8 +28,8 @@ public class RegistrationController {
     public ResponseEntity<String> registration(@Valid @RequestParam String username,
                                                @RequestParam String password, @RequestParam String email) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setLocation(URI.create("/api/users/"));
-        userService.registerUser(username,password, email);
+        ITUser user = userService.registerUser(username,password, email);
+        responseHeaders.setLocation(URI.create("/api/users/" + user.getId()));
         return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
     }
 
