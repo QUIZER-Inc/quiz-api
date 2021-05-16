@@ -3,6 +3,8 @@ package ru.project.quiz.service.ituser.Impl;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +27,7 @@ import javax.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -57,34 +60,46 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     public ITUser editUser(ITUser user) {
         Optional<ITUser> optUser = userRepository.findById(user.getId());
         if (optUser.isPresent()) {
-            if (bCryptPasswordEncoder.matches(user.getPassword(), optUser.get().getPassword())) {
-                user.setPassword(optUser.get().getPassword());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            ITUser principal = (ITUser) authentication.getPrincipal();
+            PermissionType userPermission = principal.getRoles().stream().flatMap(str -> str.getPermissions().stream())
+                    .filter(permissionType -> permissionType.equals(PermissionType.GRAND_PERMISSION))
+                    .findAny().orElse(PermissionType.GENERATE_TESTS);
+            if (userPermission.equals(PermissionType.GRAND_PERMISSION)) {
+                return editPassword(user, optUser);
             } else {
-                user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+                if (user.getUsername().equals(principal.getUsername())) {
+                    return editPassword(user, optUser);
+                } else {
+                    throw new QuizAPPException("Нет прав на изменение");
+                }
             }
-            return userRepository.save(user);
         }
         return user;
     }
 
-    @Override
-    public ITUser saveUser(ITUserDTO itUserDTO) {
-        Set<ConstraintViolation<ITUserDTO>> violations = validator.validate(itUserDTO);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
+    private ITUser editPassword(ITUser user, Optional<ITUser> optUser) {
+        if (bCryptPasswordEncoder.matches(user.getPassword(), optUser.get().getPassword())) {
+            user.setPassword(optUser.get().getPassword());
+        } else {
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
-        Optional<ITUser> optionalUser = userRepository.findUserByUsername(itUserDTO.getUsername());
+        return userRepository.save(user);
+    }
+
+    @Override
+    public ITUser registerUser(String username, String password, String email) {
+        Optional<ITUser> optionalUser = userRepository.findUserByUsername(username);
         if (optionalUser.isPresent()) {
             throw new QuizAPPException("Данный пользователь существует");
         } else {
-            String email = itUserDTO.getEmail();
             if (userRepository.existsByEmail(email)) {
                 throw new QuizAPPException("Пользователь с данной почтой уже существует");
             }
             ITUser user = new ITUser();
-            user.setUsername(itUserDTO.getUsername());
+            user.setUsername(username);
             user.setEmail(email);
-            user.setPassword(bCryptPasswordEncoder.encode(itUserDTO.getPassword()));
+            user.setPassword(bCryptPasswordEncoder.encode(password));
             Role role = new Role("USER", Set.of(PermissionType.GENERATE_TESTS));
             roleRepository.save(role);
             user.setRoles(Set.of(role));
@@ -105,7 +120,7 @@ public class ITUserServiceImpl implements UserDetailsService, ITUserService {
     @Override
     public ITUser findUserById(long id) {
         Optional<ITUser> optionalITUser = userRepository.findById(id);
-        if(optionalITUser.isEmpty()){
+        if (optionalITUser.isEmpty()) {
             throw new QuizAPPException("Юзер с данным ID не найден");
         }
         return optionalITUser.get();
