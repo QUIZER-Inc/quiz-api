@@ -37,7 +37,7 @@ public class UserController {
     @Operation(summary = "Редактирование пользователя", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping
     public ResponseEntity<ITUserDTO> editUserByName(@RequestBody ITUserDTO user) {
-        return new ResponseEntity<>(userMapper.userDTOFromUser(userService.editUser(userMapper.userFromUserDTO(user))), HttpStatus.OK);
+        return new ResponseEntity<>(userMapper.userDTOFromUser(userService.editUser(userMapper.userFromUserDTO(user))), HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Лист пользователей с данной ролью", security = @SecurityRequirement(name = "bearerAuth"))
