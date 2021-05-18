@@ -1,5 +1,6 @@
 package ru.project.quiz.service.quiz.Impl;
 
+import org.hibernate.mapping.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -15,10 +16,7 @@ import ru.project.quiz.service.quiz.QuestionService;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -113,7 +111,9 @@ public class QuestionServiceImpl implements QuestionService {
         if(optionalQuestion.isEmpty()){
             throw new QuizAPPException("Вопроса с данным ID не существует");
         }
-        return optionalQuestion.get();
+        Question question = optionalQuestion.get();
+        Collections.shuffle(question.getAnswers());
+        return question;
     }
 
     private boolean isExistQuestion(Question question) {
