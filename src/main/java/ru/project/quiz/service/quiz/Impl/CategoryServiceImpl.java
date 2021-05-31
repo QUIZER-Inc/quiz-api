@@ -19,18 +19,30 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public Category getCategory(String category) {
+        if (categoryRepository.findById(categoryRepository.findByName(category).getId()).isEmpty()){
+            throw new QuizAPPException("Данной категории не существует");
+        }
         return categoryRepository.findByName(category);
     }
 
     public Category addCategory(Category category) {
+        if(categoryRepository.findById(category.getId()).isPresent()){
+            throw new QuizAPPException("Категория с данным ID существует");
+        }
         return categoryRepository.save(category);
     }
 
     public Category editCategory(Category category) {
+        if(categoryRepository.findById(category.getId()).isEmpty()){
+            throw new QuizAPPException("Категории с данным ID не существует");
+        }
         return categoryRepository.save(category);
     }
 
     public void deleteCategory(String category) {
+        if (categoryRepository.findById(categoryRepository.findByName(category).getId()).isEmpty()){
+            throw new QuizAPPException("Данной категории не существует");
+        }
         categoryRepository.deleteByName(category);
     }
 
