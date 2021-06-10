@@ -1,6 +1,8 @@
 
 package ru.project.quiz.service.quiz.Impl;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -22,6 +24,7 @@ import ru.project.quiz.repository.quiz.QuestionRepository;
 import ru.project.quiz.repository.quiz.QuizRepository;
 import ru.project.quiz.repository.quiz.QuizSampleRepository;
 import ru.project.quiz.service.quiz.QuizService;
+import ru.project.quiz.service.quiz.RatingService;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -32,24 +35,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class QuizServiceImpl implements QuizService { //TODO ISSUE#37
+@AllArgsConstructor
+public class QuizServiceImpl implements QuizService {
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final QuizSampleRepository quizSampleRepository;
     private final QuizMapper quizMapper;
     private final Validator validator;
+    private final RatingService ratingService;
 
-    Logger log = LoggerFactory.getLogger(QuizServiceImpl.class);
-
-    public QuizServiceImpl(QuizRepository quizRepository, QuestionRepository questionRepository, UserRepository userRepository, QuizSampleRepository quizSampleRepository, QuizMapper quizMapper, Validator validator) {
-        this.quizRepository = quizRepository;
-        this.questionRepository = questionRepository;
-        this.userRepository = userRepository;
-        this.quizSampleRepository = quizSampleRepository;
-        this.quizMapper = quizMapper;
-        this.validator = validator;
-    }
+    private final Logger log = LoggerFactory.getLogger(QuizServiceImpl.class);
 
     private final static String allQuestionsSuccessfullyAdded = "Все вопросы удачно добавлены";
     private final static String notEnoughQuestions = "В нашей базе данных нет столько вопросов, было добавлено ";
@@ -152,7 +148,8 @@ public class QuizServiceImpl implements QuizService { //TODO ISSUE#37
         finishedQuiz.setItUser(itUser.get());
         log.info("Попытка сохранить решенный вопрос с id: {}", finishedQuiz.getId());
         quizRepository.save(finishedQuiz);
-        log.info("Попытка успешна решенный вопрос с id: {} сохранен", finishedQuiz.getId());
+        log.info("Попытка успешна, решенный вопрос с id: {} сохранен", finishedQuiz.getId());
+        ratingService.addUserToRating(itUser.get());
         return quizDTO;
     }
 
