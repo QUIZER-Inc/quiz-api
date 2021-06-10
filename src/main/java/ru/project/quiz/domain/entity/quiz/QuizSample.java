@@ -2,6 +2,7 @@ package ru.project.quiz.domain.entity.quiz;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.project.quiz.domain.entity.BaseEntity;
 import ru.project.quiz.domain.enums.question.CategoryType;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Table(name = "quiz_sample")
+@NoArgsConstructor
 public class QuizSample extends BaseEntity {
 
     @OneToMany(mappedBy = "quizSample")
@@ -28,7 +30,4 @@ public class QuizSample extends BaseEntity {
     @Column(name = "sub_category")
     @Enumerated(EnumType.STRING)
     private List<CategoryType> subCategories;
-
-    public QuizSample() {
-    }
 }
