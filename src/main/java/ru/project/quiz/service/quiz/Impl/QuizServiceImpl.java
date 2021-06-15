@@ -12,10 +12,7 @@ import ru.project.quiz.domain.dto.ituser.ITUserDTO;
 import ru.project.quiz.domain.dto.quiz.AnswerDTO;
 import ru.project.quiz.domain.dto.quiz.QuizDTO;
 import ru.project.quiz.domain.entity.ituser.ITUser;
-import ru.project.quiz.domain.entity.quiz.Question;
-import ru.project.quiz.domain.entity.quiz.QuestionQuiz;
-import ru.project.quiz.domain.entity.quiz.Quiz;
-import ru.project.quiz.domain.entity.quiz.QuizSample;
+import ru.project.quiz.domain.entity.quiz.*;
 import ru.project.quiz.domain.enums.question.QuizStatus;
 import ru.project.quiz.handler.exception.*;
 import ru.project.quiz.mapper.quiz.QuizMapper;
@@ -150,6 +147,10 @@ public class QuizServiceImpl implements QuizService {
         quizRepository.save(finishedQuiz);
         log.info("Попытка успешна, решенный вопрос с id: {} сохранен", finishedQuiz.getId());
         ratingService.addUserToRating(itUser.get());
+        Rating rating = ratingService.getRatingByUserId(itUser.get().getId());
+        rating.setPassedQuiz(rating.getPassedQuiz() +1);
+        rating.setRightAnswers(rating.getRightAnswers() + (int)countOfCorrectAnswers);
+        ratingService.saveEditedRating(rating);
         return quizDTO;
     }
 
