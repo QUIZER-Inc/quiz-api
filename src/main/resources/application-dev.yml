@@ -26,4 +26,4 @@ server:
     keyStoreType: PKCS12
     keyAlias: tomcat
 security:
-  require-ssl: true
+  require-ssl: false
